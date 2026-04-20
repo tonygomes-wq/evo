@@ -51,7 +51,7 @@ https://github.com/tonygomes-wq/evo/
    ```
    Name: evo-auth
    Port: 3001
-   Domain: auth.seudominio.com
+   Domain: auth.macip.com.br
    ```
 
 5. Adicionar Environment Variables:
@@ -79,14 +79,14 @@ https://github.com/tonygomes-wq/evo/
    DOORKEEPER_JWT_AUD=[]
    
    # URLs
-   FRONTEND_URL=https://evo.seudominio.com
+   FRONTEND_URL=https://evo.macip.com.br
    
    # SMTP (configurar com seus dados)
    SMTP_ADDRESS=smtp.gmail.com
    SMTP_PORT=587
    SMTP_USERNAME=seu-email@gmail.com
    SMTP_PASSWORD=sua-senha-app
-   MAILER_SENDER_EMAIL=noreply@seudominio.com
+   MAILER_SENDER_EMAIL=noreply@macip.com.br
    SMTP_AUTHENTICATION=plain
    SMTP_ENABLE_STARTTLS_AUTO=true
    
@@ -167,7 +167,7 @@ https://github.com/tonygomes-wq/evo/
    ```
    Name: evo-crm
    Port: 3000
-   Domain: api.seudominio.com
+   Domain: api.macip.com.br
    ```
 
 5. Adicionar Environment Variables:
@@ -200,9 +200,9 @@ https://github.com/tonygomes-wq/evo/
    BOT_RUNTIME_POSTBACK_BASE_URL=http://evo-crm:3000
    
    # URLs públicas
-   BACKEND_URL=https://api.seudominio.com
-   FRONTEND_URL=https://evo.seudominio.com
-   CORS_ORIGINS=https://evo.seudominio.com,https://api.seudominio.com
+   BACKEND_URL=https://api.macip.com.br
+   FRONTEND_URL=https://evo.macip.com.br
+   CORS_ORIGINS=https://evo.macip.com.br,https://api.macip.com.br
    
    # Features
    DISABLE_TELEMETRY=true
@@ -285,7 +285,7 @@ https://github.com/tonygomes-wq/evo/
    ```
    Name: evo-core
    Port: 5555
-   Domain: core.seudominio.com
+   Domain: core.macip.com.br
    ```
 
 5. Adicionar Environment Variables:
@@ -350,7 +350,7 @@ https://github.com/tonygomes-wq/evo/
    ```
    Name: evo-processor
    Port: 8000
-   Domain: processor.seudominio.com
+   Domain: processor.macip.com.br
    ```
 
 5. Adicionar Environment Variables:
@@ -359,12 +359,12 @@ https://github.com/tonygomes-wq/evo/
    API_TITLE=Agent Processor Community
    API_DESCRIPTION=Agent Processor Community for Evo AI
    API_VERSION=1.0.0
-   API_URL=https://processor.seudominio.com
-   APP_URL=https://processor.seudominio.com
+   API_URL=https://processor.macip.com.br
+   APP_URL=https://processor.macip.com.br
    
    # Organization
    ORGANIZATION_NAME=Evo AI
-   ORGANIZATION_URL=https://seudominio.com
+   ORGANIZATION_URL=https://macip.com.br
    
    # Database
    POSTGRES_CONNECTION_STRING=postgresql://postgres:355cbf3375d96724d0ff@evogo_postgres:5432/postgres
@@ -446,7 +446,7 @@ https://github.com/tonygomes-wq/evo/
    ```
    Name: evo-bot-runtime
    Port: 8080
-   Domain: bot.seudominio.com (opcional)
+   Domain: bot.macip.com.br (opcional)
    ```
 
 5. Adicionar Environment Variables:
@@ -487,27 +487,27 @@ https://github.com/tonygomes-wq/evo/
 
 4. **IMPORTANTE: Configurar Build Args** (antes do build):
    ```
-   VITE_API_URL=https://api.seudominio.com
-   VITE_AUTH_API_URL=https://auth.seudominio.com
-   VITE_EVOAI_API_URL=https://core.seudominio.com
-   VITE_AGENT_PROCESSOR_URL=https://processor.seudominio.com
+   VITE_API_URL=https://api.macip.com.br
+   VITE_AUTH_API_URL=https://auth.macip.com.br
+   VITE_EVOAI_API_URL=https://core.macip.com.br
+   VITE_AGENT_PROCESSOR_URL=https://processor.macip.com.br
    ```
 
 5. Configurar App:
    ```
    Name: evo-frontend
    Port: 80
-   Domain: evo.seudominio.com
+   Domain: evo.macip.com.br
    ```
 
 6. Adicionar Environment Variables (runtime):
    ```bash
    VITE_APP_ENV=production
-   VITE_API_URL=https://api.seudominio.com
-   VITE_AUTH_API_URL=https://auth.seudominio.com
-   VITE_WS_URL=https://api.seudominio.com
-   VITE_EVOAI_API_URL=https://core.seudominio.com
-   VITE_AGENT_PROCESSOR_URL=https://processor.seudominio.com
+   VITE_API_URL=https://api.macip.com.br
+   VITE_AUTH_API_URL=https://auth.macip.com.br
+   VITE_WS_URL=https://api.macip.com.br
+   VITE_EVOAI_API_URL=https://core.macip.com.br
+   VITE_AGENT_PROCESSOR_URL=https://processor.macip.com.br
    VITE_TINYMCE_API_KEY=no-api-key
    ```
 

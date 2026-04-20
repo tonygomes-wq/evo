@@ -32,12 +32,12 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 - [ ] Conexão testada com sucesso
 
 ### Domínios
-- [ ] `evo.seudominio.com` (Frontend)
-- [ ] `auth.seudominio.com` (Auth Service)
-- [ ] `api.seudominio.com` (CRM Service)
-- [ ] `core.seudominio.com` (Core Service)
-- [ ] `processor.seudominio.com` (Processor Service)
-- [ ] `bot.seudominio.com` (Bot Runtime - opcional)
+- [ ] `evo.macip.com.br` (Frontend)
+- [ ] `auth.macip.com.br` (Auth Service)
+- [ ] `api.macip.com.br` (CRM Service)
+- [ ] `core.macip.com.br` (Core Service)
+- [ ] `processor.macip.com.br` (Processor Service)
+- [ ] `bot.macip.com.br` (Bot Runtime - opcional)
 
 ---
 
@@ -64,7 +64,7 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 ### 1. Auth Service
 - [ ] App `evo-auth` criada
 - [ ] Porta `3001` configurada
-- [ ] Domínio `auth.seudominio.com` configurado
+- [ ] Domínio `auth.macip.com.br` configurado
 - [ ] Source GitHub conectado
 - [ ] Dockerfile correto selecionado
 - [ ] Todas as variáveis de ambiente configuradas
@@ -76,7 +76,7 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 - [ ] Container iniciado
 - [ ] Health check passando
 - [ ] HTTPS/TLS habilitado
-- [ ] Endpoint `https://auth.seudominio.com/health` acessível
+- [ ] Endpoint `https://auth.macip.com.br/health` acessível
 
 ### 2. Auth Sidekiq
 - [ ] App `evo-auth-sidekiq` criada
@@ -101,7 +101,7 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 ### 4. CRM Service
 - [ ] App `evo-crm` criada
 - [ ] Porta `3000` configurada
-- [ ] Domínio `api.seudominio.com` configurado
+- [ ] Domínio `api.macip.com.br` configurado
 - [ ] Source GitHub conectado
 - [ ] Dockerfile `docker/Dockerfile` selecionado
 - [ ] Todas as variáveis de ambiente configuradas
@@ -113,7 +113,7 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 - [ ] Container iniciado
 - [ ] Health check passando
 - [ ] HTTPS/TLS habilitado
-- [ ] Endpoint `https://api.seudominio.com/health/live` acessível
+- [ ] Endpoint `https://api.macip.com.br/health/live` acessível
 
 ### 5. CRM Sidekiq
 - [ ] App `evo-crm-sidekiq` criada
@@ -135,7 +135,7 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 ### 7. Core Service
 - [ ] App `evo-core` criada
 - [ ] Porta `5555` configurada
-- [ ] Domínio `core.seudominio.com` configurado
+- [ ] Domínio `core.macip.com.br` configurado
 - [ ] Source GitHub conectado
 - [ ] Todas as variáveis de ambiente configuradas
 - [ ] URLs internas corretas
@@ -145,12 +145,12 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 - [ ] Container iniciado
 - [ ] Health check passando
 - [ ] HTTPS/TLS habilitado
-- [ ] Endpoint `https://core.seudominio.com/health` acessível
+- [ ] Endpoint `https://core.macip.com.br/health` acessível
 
 ### 8. Processor Service
 - [ ] App `evo-processor` criada
 - [ ] Porta `8000` configurada
-- [ ] Domínio `processor.seudominio.com` configurado
+- [ ] Domínio `processor.macip.com.br` configurado
 - [ ] Source GitHub conectado
 - [ ] Todas as variáveis de ambiente configuradas
 - [ ] Connection string do PostgreSQL correta
@@ -161,12 +161,12 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 - [ ] Container iniciado
 - [ ] Health check passando
 - [ ] HTTPS/TLS habilitado
-- [ ] Endpoint `https://processor.seudominio.com/health` acessível
+- [ ] Endpoint `https://processor.macip.com.br/health` acessível
 
 ### 9. Bot Runtime
 - [ ] App `evo-bot-runtime` criada
 - [ ] Porta `8080` configurada
-- [ ] Domínio `bot.seudominio.com` configurado (opcional)
+- [ ] Domínio `bot.macip.com.br` configurado (opcional)
 - [ ] Source GitHub conectado
 - [ ] Todas as variáveis de ambiente configuradas
 - [ ] Redis URL correta
@@ -180,13 +180,13 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 ### 10. Frontend
 - [ ] App `evo-frontend` criada
 - [ ] Porta `80` configurada
-- [ ] Domínio `evo.seudominio.com` configurado
+- [ ] Domínio `evo.macip.com.br` configurado
 - [ ] Source GitHub conectado
 - [ ] **Build Args configurados corretamente** (CRÍTICO!)
-  - `VITE_API_URL=https://api.seudominio.com`
-  - `VITE_AUTH_API_URL=https://auth.seudominio.com`
-  - `VITE_EVOAI_API_URL=https://core.seudominio.com`
-  - `VITE_AGENT_PROCESSOR_URL=https://processor.seudominio.com`
+  - `VITE_API_URL=https://api.macip.com.br`
+  - `VITE_AUTH_API_URL=https://auth.macip.com.br`
+  - `VITE_EVOAI_API_URL=https://core.macip.com.br`
+  - `VITE_AGENT_PROCESSOR_URL=https://processor.macip.com.br`
 - [ ] Variáveis runtime configuradas
 - [ ] Health check `/health` configurado
 - [ ] Recursos: 0.5 CPU, 256 MB RAM
@@ -194,22 +194,22 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 - [ ] Container iniciado
 - [ ] Health check passando
 - [ ] HTTPS/TLS habilitado
-- [ ] Site `https://evo.seudominio.com` acessível
+- [ ] Site `https://evo.macip.com.br` acessível
 
 ---
 
 ## 📋 Fase 3: Verificação e Testes
 
 ### Health Checks
-- [ ] `curl https://auth.seudominio.com/health` retorna 200
-- [ ] `curl https://api.seudominio.com/health/live` retorna 200
-- [ ] `curl https://core.seudominio.com/health` retorna 200
-- [ ] `curl https://processor.seudominio.com/health` retorna 200
-- [ ] `curl https://bot.seudominio.com/health` retorna 200 (se exposto)
+- [ ] `curl https://auth.macip.com.br/health` retorna 200
+- [ ] `curl https://api.macip.com.br/health/live` retorna 200
+- [ ] `curl https://core.macip.com.br/health` retorna 200
+- [ ] `curl https://processor.macip.com.br/health` retorna 200
+- [ ] `curl https://bot.macip.com.br/health` retorna 200 (se exposto)
 - [ ] Frontend carrega sem erros no browser
 
 ### Teste de Autenticação
-- [ ] Acessar `https://evo.seudominio.com`
+- [ ] Acessar `https://evo.macip.com.br`
 - [ ] Página de login carrega
 - [ ] Login com credenciais padrão funciona
 - [ ] Token JWT recebido
@@ -219,9 +219,9 @@ Use este checklist para garantir que todos os passos foram executados corretamen
 ### Teste de API
 ```bash
 # Login via API
-- [ ] POST https://auth.seudominio.com/api/v1/auth/login funciona
+- [ ] POST https://auth.macip.com.br/api/v1/auth/login funciona
 - [ ] Token recebido no response
-- [ ] GET https://auth.seudominio.com/api/v1/auth/me com token funciona
+- [ ] GET https://auth.macip.com.br/api/v1/auth/me com token funciona
 - [ ] Dados do usuário retornados
 ```
 

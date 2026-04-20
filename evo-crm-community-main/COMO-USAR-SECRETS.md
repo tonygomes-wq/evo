@@ -49,12 +49,12 @@ Editar o arquivo `.env.production` e configurar SMTP:
 ```bash
 SMTP_ADDRESS=smtp.gmail.com
 SMTP_PORT=587
-SMTP_DOMAIN=minhaempresa.com.br
+SMTP_DOMAIN=macip.com.br
 SMTP_USERNAME=seu-email@gmail.com
 SMTP_PASSWORD=sua-senha-app-gmail  # Gerar em: https://myaccount.google.com/apppasswords
 SMTP_AUTHENTICATION=plain
 SMTP_ENABLE_STARTTLS_AUTO=true
-MAILER_SENDER_EMAIL=noreply@minhaempresa.com.br
+MAILER_SENDER_EMAIL=noreply@macip.com.br
 ```
 
 ### Opção B: SendGrid
@@ -62,12 +62,12 @@ MAILER_SENDER_EMAIL=noreply@minhaempresa.com.br
 ```bash
 SMTP_ADDRESS=smtp.sendgrid.net
 SMTP_PORT=587
-SMTP_DOMAIN=minhaempresa.com.br
+SMTP_DOMAIN=macip.com.br
 SMTP_USERNAME=apikey
 SMTP_PASSWORD=SG.sua-api-key-aqui
 SMTP_AUTHENTICATION=plain
 SMTP_ENABLE_STARTTLS_AUTO=true
-MAILER_SENDER_EMAIL=noreply@minhaempresa.com.br
+MAILER_SENDER_EMAIL=noreply@macip.com.br
 ```
 
 ### Opção C: Mailgun
@@ -75,12 +75,12 @@ MAILER_SENDER_EMAIL=noreply@minhaempresa.com.br
 ```bash
 SMTP_ADDRESS=smtp.mailgun.org
 SMTP_PORT=587
-SMTP_DOMAIN=minhaempresa.com.br
-SMTP_USERNAME=postmaster@mg.minhaempresa.com.br
+SMTP_DOMAIN=macip.com.br
+SMTP_USERNAME=postmaster@mg.macip.com.br
 SMTP_PASSWORD=sua-senha-mailgun
 SMTP_AUTHENTICATION=plain
 SMTP_ENABLE_STARTTLS_AUTO=true
-MAILER_SENDER_EMAIL=noreply@minhaempresa.com.br
+MAILER_SENDER_EMAIL=noreply@macip.com.br
 ```
 
 ---
@@ -115,14 +115,14 @@ DOORKEEPER_JWT_ISS=evo-auth-service
 DOORKEEPER_JWT_AUD=[]
 
 # URLs (substituir pelos seus domínios)
-FRONTEND_URL=https://evo.seudominio.com
+FRONTEND_URL=https://evo.macip.com.br
 
 # SMTP (configurar com seus dados)
 SMTP_ADDRESS=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=seu-email@gmail.com
 SMTP_PASSWORD=sua-senha-app
-MAILER_SENDER_EMAIL=noreply@seudominio.com
+MAILER_SENDER_EMAIL=noreply@macip.com.br
 
 # Outros
 MFA_ISSUER=EvoAI
@@ -161,9 +161,9 @@ BOT_RUNTIME_URL=http://evo-bot-runtime:8080
 BOT_RUNTIME_POSTBACK_BASE_URL=http://evo-crm:3000
 
 # URLs públicas (substituir pelos seus domínios)
-BACKEND_URL=https://api.seudominio.com
-FRONTEND_URL=https://evo.seudominio.com
-CORS_ORIGINS=https://evo.seudominio.com,https://api.seudominio.com
+BACKEND_URL=https://api.macip.com.br
+FRONTEND_URL=https://evo.macip.com.br
+CORS_ORIGINS=https://evo.macip.com.br,https://api.macip.com.br
 
 # Features
 DISABLE_TELEMETRY=true
@@ -242,20 +242,20 @@ AI_CALL_TIMEOUT_SECONDS=30
 
 **Build Args (no EasyPanel):**
 ```
-VITE_API_URL=https://api.seudominio.com
-VITE_AUTH_API_URL=https://auth.seudominio.com
-VITE_EVOAI_API_URL=https://core.seudominio.com
-VITE_AGENT_PROCESSOR_URL=https://processor.seudominio.com
+VITE_API_URL=https://api.macip.com.br
+VITE_AUTH_API_URL=https://auth.macip.com.br
+VITE_EVOAI_API_URL=https://core.macip.com.br
+VITE_AGENT_PROCESSOR_URL=https://processor.macip.com.br
 ```
 
 **Environment Variables:**
 ```bash
 VITE_APP_ENV=production
-VITE_API_URL=https://api.seudominio.com
-VITE_AUTH_API_URL=https://auth.seudominio.com
-VITE_WS_URL=https://api.seudominio.com
-VITE_EVOAI_API_URL=https://core.seudominio.com
-VITE_AGENT_PROCESSOR_URL=https://processor.seudominio.com
+VITE_API_URL=https://api.macip.com.br
+VITE_AUTH_API_URL=https://auth.macip.com.br
+VITE_WS_URL=https://api.macip.com.br
+VITE_EVOAI_API_URL=https://core.macip.com.br
+VITE_AGENT_PROCESSOR_URL=https://processor.macip.com.br
 ```
 
 ---

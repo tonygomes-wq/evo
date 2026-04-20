@@ -59,14 +59,14 @@ Para cada serviço, você vai:
 
 | # | Nome | Build Path | Dockerfile | Port | Domínio |
 |---|------|------------|------------|------|---------|
-| 1 | `evo-auth` | `/evo-auth-service-community-main` | `Dockerfile` | 3001 | auth.seudominio.com |
+| 1 | `evo-auth` | `/evo-auth-service-community-main` | `Dockerfile` | 3001 | auth.macip.com.br |
 | 2 | `evo-auth-sidekiq` | `/evo-auth-service-community-main` | `Dockerfile` | - | - |
-| 3 | `evo-crm` | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | 3000 | api.seudominio.com |
+| 3 | `evo-crm` | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | 3000 | api.macip.com.br |
 | 4 | `evo-crm-sidekiq` | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | - | - |
-| 5 | `evo-core` | `/evo-ai-core-service-community-main` | `Dockerfile` | 5555 | core.seudominio.com |
-| 6 | `evo-processor` | `/evo-ai-processor-community-main` | `Dockerfile` | 8000 | processor.seudominio.com |
-| 7 | `evo-bot-runtime` | `/evo-bot-runtime-main` | `Dockerfile` | 8080 | bot.seudominio.com |
-| 8 | `evo-frontend` | `/evo-ai-frontend-community-main` | `Dockerfile` | 80 | evo.seudominio.com |
+| 5 | `evo-core` | `/evo-ai-core-service-community-main` | `Dockerfile` | 5555 | core.macip.com.br |
+| 6 | `evo-processor` | `/evo-ai-processor-community-main` | `Dockerfile` | 8000 | processor.macip.com.br |
+| 7 | `evo-bot-runtime` | `/evo-bot-runtime-main` | `Dockerfile` | 8080 | bot.macip.com.br |
+| 8 | `evo-frontend` | `/evo-ai-frontend-community-main` | `Dockerfile` | 80 | evo.macip.com.br |
 
 ---
 
@@ -109,7 +109,7 @@ Para cada serviço, você vai:
 ├──────────────────────────────────────────────────────────┤
 │ Name: evo-auth                                          │
 │ Port: 3001                                              │
-│ Domain: auth.seudominio.com                             │
+│ Domain: auth.macip.com.br                               │
 └──────────────────────────────────────────────────────────┘
                         ↓
 ┌──────────────────────────────────────────────────────────┐
@@ -141,7 +141,7 @@ Para cada serviço, você vai:
 ┌──────────────────────────────────────────────────────────┐
 │ ✅ Aguardar build completar                             │
 │ ✅ Verificar logs                                       │
-│ ✅ Testar: curl https://auth.seudominio.com/health      │
+│ ✅ Testar: curl https://auth.macip.com.br/health        │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -184,7 +184,7 @@ Para cada serviço, você vai:
 
 2. Testar Health Check
    ┌────────────────────────────────────┐
-   │ curl https://service.dominio.com/health │
+   │ curl https://service.macip.com.br/health │
    │ Deve retornar 200 OK               │
    └────────────────────────────────────┘
 
