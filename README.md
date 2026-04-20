@@ -251,7 +251,7 @@ Para cada serviço no EasyPanel:
 | Serviço | Build Path | Port |
 |---------|------------|------|
 | evo-auth | `/evo-auth-service-community-main` | 3001 |
-| evo-crm | `/evo-crm-community-main/evo-ai-crm-community` | 3000 |
+| evo-crm | `/evo-ai-crm-community-main` | 3000 |
 | evo-core | `/evo-ai-core-service-community-main` | 5555 |
 | evo-processor | `/evo-ai-processor-community-main` | 8000 |
 | evo-bot-runtime | `/evo-bot-runtime-main` | 8080 |

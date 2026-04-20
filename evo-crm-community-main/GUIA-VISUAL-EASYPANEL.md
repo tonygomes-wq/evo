@@ -61,8 +61,8 @@ Para cada serviço, você vai:
 |---|------|------------|------------|------|---------|
 | 1 | `evo-auth` | `/evo-auth-service-community-main` | `Dockerfile` | 3001 | auth.macip.com.br |
 | 2 | `evo-auth-sidekiq` | `/evo-auth-service-community-main` | `Dockerfile` | - | - |
-| 3 | `evo-crm` | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | 3000 | api.macip.com.br |
-| 4 | `evo-crm-sidekiq` | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | - | - |
+| 3 | `evo-crm` | `/evo-ai-crm-community-main` | `docker/Dockerfile` | 3000 | api.macip.com.br |
+| 4 | `evo-crm-sidekiq` | `/evo-ai-crm-community-main` | `docker/Dockerfile` | - | - |
 | 5 | `evo-core` | `/evo-ai-core-service-community-main` | `Dockerfile` | 5555 | core.macip.com.br |
 | 6 | `evo-processor` | `/evo-ai-processor-community-main` | `Dockerfile` | 8000 | processor.macip.com.br |
 | 7 | `evo-bot-runtime` | `/evo-bot-runtime-main` | `Dockerfile` | 8080 | bot.macip.com.br |

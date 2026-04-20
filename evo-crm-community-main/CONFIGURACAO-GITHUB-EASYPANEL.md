@@ -153,14 +153,14 @@ https://github.com/tonygomes-wq/evo/
    ```
    Repository: https://github.com/tonygomes-wq/evo
    Branch: main
-   Build Path: /evo-crm-community-main/evo-ai-crm-community
+   Build Path: /evo-ai-crm-community-main
    ```
 
 3. Configurar Build:
    ```
    Build Type: Dockerfile
    Dockerfile Path: docker/Dockerfile
-   Build Context: /evo-crm-community-main/evo-ai-crm-community
+   Build Context: /evo-ai-crm-community-main
    ```
 
 4. Configurar App:
@@ -237,14 +237,14 @@ https://github.com/tonygomes-wq/evo/
    ```
    Repository: https://github.com/tonygomes-wq/evo
    Branch: main
-   Build Path: /evo-crm-community-main/evo-ai-crm-community
+   Build Path: /evo-ai-crm-community-main
    ```
 
 3. Configurar Build:
    ```
    Build Type: Dockerfile
    Dockerfile Path: docker/Dockerfile
-   Build Context: /evo-crm-community-main/evo-ai-crm-community
+   Build Context: /evo-ai-crm-community-main
    ```
 
 4. Configurar App:
@@ -525,8 +525,8 @@ https://github.com/tonygomes-wq/evo/
 |---------|----------------|-----------------|------|
 | evo-auth | `/evo-auth-service-community-main` | `Dockerfile` | 3001 |
 | evo-auth-sidekiq | `/evo-auth-service-community-main` | `Dockerfile` | - |
-| evo-crm | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | 3000 |
-| evo-crm-sidekiq | `/evo-crm-community-main/evo-ai-crm-community` | `docker/Dockerfile` | - |
+| evo-crm | `/evo-ai-crm-community-main` | `docker/Dockerfile` | 3000 |
+| evo-crm-sidekiq | `/evo-ai-crm-community-main` | `docker/Dockerfile` | - |
 | evo-core | `/evo-ai-core-service-community-main` | `Dockerfile` | 5555 |
 | evo-processor | `/evo-ai-processor-community-main` | `Dockerfile` | 8000 |
 | evo-bot-runtime | `/evo-bot-runtime-main` | `Dockerfile` | 8080 |
