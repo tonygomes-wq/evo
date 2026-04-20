@@ -1,2 +1,7 @@
 .env
+.env.production
+SECRETS-PRODUCTION.txt
+*.secret
+*.key
+*.pem
 _evo*
