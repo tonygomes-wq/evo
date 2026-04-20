@@ -215,15 +215,50 @@ Cada serviço possui sua própria documentação:
 
 ## 🚀 Deploy no EasyPanel
 
+### Repositório GitHub
+```
+https://github.com/tonygomes-wq/evo
+```
+
 ### Pré-requisitos
-- ✅ PostgreSQL com pgvector
+- ✅ PostgreSQL com pgvector (já configurado)
+- ✅ Redis (já configurado)
+- ✅ Conta GitHub conectada ao EasyPanel
 - ✅ 6 domínios configurados
 - ✅ SMTP configurado
 - ✅ ~9.5 CPU cores
 - ✅ ~9 GB RAM
 
+### Guias de Deploy
+
+| Guia | Descrição | Quando Usar |
+|------|-----------|-------------|
+| **[🎨 GUIA-VISUAL-EASYPANEL.md](evo-crm-community-main/GUIA-VISUAL-EASYPANEL.md)** | Guia visual simplificado | Iniciantes |
+| **[🔗 CONFIGURACAO-GITHUB-EASYPANEL.md](evo-crm-community-main/CONFIGURACAO-GITHUB-EASYPANEL.md)** | Configuração detalhada GitHub → EasyPanel | Todos |
+| **[⚡ EASYPANEL-QUICK-START.md](evo-crm-community-main/EASYPANEL-QUICK-START.md)** | Deploy rápido (30 min) | Experientes |
+| **[✅ CHECKLIST-DEPLOY-EASYPANEL.md](evo-crm-community-main/CHECKLIST-DEPLOY-EASYPANEL.md)** | Checklist completo | Durante deploy |
+
+### Configuração Rápida
+
+Para cada serviço no EasyPanel:
+
+1. **Create App** → From Source
+2. **Repository:** `tonygomes-wq/evo`
+3. **Branch:** `main`
+4. **Build Path:** Ver tabela abaixo
+5. **Environment Variables:** Copiar de `.env.production`
+
+| Serviço | Build Path | Port |
+|---------|------------|------|
+| evo-auth | `/evo-auth-service-community-main` | 3001 |
+| evo-crm | `/evo-crm-community-main/evo-ai-crm-community` | 3000 |
+| evo-core | `/evo-ai-core-service-community-main` | 5555 |
+| evo-processor | `/evo-ai-processor-community-main` | 8000 |
+| evo-bot-runtime | `/evo-bot-runtime-main` | 8080 |
+| evo-frontend | `/evo-ai-frontend-community-main` | 80 |
+
 ### Ordem de Deploy
-1. Redis
+1. Redis (já existe)
 2. Auth Service + Sidekiq
 3. CRM Service + Sidekiq
 4. Core Service
@@ -235,10 +270,12 @@ Cada serviço possui sua própria documentação:
 - Setup inicial: 30-40 minutos
 - Configuração completa: 2-4 horas
 
-### Guias Recomendados
-1. **Iniciante:** [EASYPANEL-QUICK-START.md](evo-crm-community-main/EASYPANEL-QUICK-START.md)
-2. **Avançado:** [DOCUMENTACAO-LOCAL-EASYPANEL.md](evo-crm-community-main/DOCUMENTACAO-LOCAL-EASYPANEL.md)
-3. **Arquiteto:** [ARQUITETURA-EASYPANEL.md](evo-crm-community-main/ARQUITETURA-EASYPANEL.md)
+### Secrets Já Gerados
+✅ Todos os secrets já foram gerados e estão em:
+- `.env.production` - Configuração completa
+- `SECRETS-PRODUCTION.txt` - Para guardar em password manager
+
+**Próximo passo:** Configurar domínios e seguir o [GUIA-VISUAL-EASYPANEL.md](evo-crm-community-main/GUIA-VISUAL-EASYPANEL.md)
 
 ---
 
