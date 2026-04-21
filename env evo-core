@@ -1,0 +1,27 @@
+# Database
+   DB_HOST=evogo_postgres
+   DB_PORT=5432
+   DB_USER=postgres
+   DB_PASSWORD=355cbf3375d96724de1f
+   DB_NAME=evo_community
+   DB_SSLMODE=disable
+   
+   # Connection pool
+   DB_MAX_IDLE_CONNS=10
+   DB_MAX_OPEN_CONNS=100
+   DB_CONN_MAX_LIFETIME=1h
+   DB_CONN_MAX_IDLE_TIME=30m
+   
+   # Secrets
+   JWT_SECRET_KEY=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==
+   JWT_ALGORITHM=HS256
+   ENCRYPTION_KEY=G5ceki9s9/Klo5rR0IKJONPx6mxHVeLASqR518klR7Q=
+   
+   # URLs internas
+   EVOLUTION_BASE_URL=http://evo-crm:3000
+   EVO_AUTH_BASE_URL=http://evo-auth:3001
+   AI_PROCESSOR_URL=http://evo-processor:8000
+   AI_PROCESSOR_VERSION=v1
+   
+   # Server
+   PORT=5555

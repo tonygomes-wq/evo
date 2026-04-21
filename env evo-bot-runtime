@@ -1,0 +1,5 @@
+LISTEN_ADDR=0.0.0.0:8080
+   REDIS_URL=redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
+   AI_PROCESSOR_URL=http://evo-processor:8000
+   BOT_RUNTIME_SECRET=6c042ef5122814fe0ca8224908957ba39a55dfd1f0c3ae1dd8c4e0a3f5623b50
+   AI_CALL_TIMEOUT_SECONDS=30

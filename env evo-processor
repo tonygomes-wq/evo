@@ -1,0 +1,58 @@
+# API
+   API_TITLE=Agent Processor Community
+   API_DESCRIPTION=Agent Processor Community for Evo AI
+   API_VERSION=1.0.0
+   API_URL=https://processor.macip.com.br
+   APP_URL=https://processor.macip.com.br
+   
+   # Organization
+   ORGANIZATION_NAME=Evo AI
+   ORGANIZATION_URL=https://macip.com.br
+   
+   # Database
+   POSTGRES_CONNECTION_STRING=postgresql://postgres:355cbf3375d96724de1f@evogo_postgres:5432/evo_community
+   
+   # Redis
+   REDIS_HOST=evogo_redis
+   REDIS_PORT=6379
+   REDIS_PASSWORD=d9kizl4kz7riul5ah7if
+   REDIS_DB=0
+   REDIS_SSL=false
+   REDIS_KEY_PREFIX=a2a:
+   REDIS_TTL=3600
+   
+   # Secrets
+   JWT_SECRET_KEY=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==
+   JWT_ALGORITHM=HS256
+   ENCRYPTION_KEY=G5ceki9s9/Klo5rR0IKJONPx6mxHVeLASqR518klR7Q=
+   EVOAI_CRM_API_TOKEN=22d16004-2706-4df5-a9e4-31dc35053816
+   
+   # URLs internas
+   EVO_AI_CRM_URL=http://evo-crm:3000
+   CORE_SERVICE_URL=http://evo-core:5555/api/v1
+   EVO_AUTH_BASE_URL=http://evo-auth:3001
+   EVOLUTION_BASE_URL=http://evo-crm:3000
+   EVO_CORE_BASE_URL=http://evo-core:5555
+   
+   # Server
+   HOST=0.0.0.0
+   PORT=8000
+   DEBUG=false
+   
+   # AI Engine
+   AI_ENGINE=adk
+   
+   # Cache
+   TOOLS_CACHE_ENABLED=true
+   TOOLS_CACHE_TTL=3600
+   
+   # Logging
+   LOG_LEVEL=INFO
+   
+   # Memory
+   MEMORY_SERVICE_TYPE=http
+   MEMORY_ENABLED=true
+   MEMORY_MAX_RESULTS=10
+   
+   # Artifact
+   ARTIFACT_SERVICE_TYPE=in_memory
