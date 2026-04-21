@@ -42,37 +42,35 @@ redis://evogo_redis:6379/0
       Falta :senha@
 ```
 
-**Erro 2: Sem dois pontos antes da senha**
+**Erro 2: Formato incorreto**
 ```
-redis://dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
       ^^
-      Falta : antes da senha
+      Formato antigo, usar: default:senha
 ```
 
-**Erro 3: Sem arroba depois da senha**
+**Erro 3: Senha incorreta**
 ```
-redis://:dpkjzl4kz7riuI5ah7rfevogo_redis:6379/0
-                              ^^
-                              Falta @
+redis://default:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379
+                ^^^^^^^^^^^^^^^^^^^^
+                Senha errada
 ```
 
 ### ✅ VALOR CORRETO
 ```
-redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
-       ↑                      ↑
-       Dois pontos            Arroba
-       antes da senha         depois da senha
+redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
+        ^^^^^^^ ^^^^^^^^^^^^^^^^^^^
+        Usuário Senha correta
 ```
 
 ### 📝 Estrutura Correta
 ```
-redis://  :  senha  @  host  :  porta  /  db
-         ↑         ↑        ↑        ↑
-         |         |        |        |
-         |         |        |        Número do banco (0)
-         |         |        Porta (6379)
-         |         Host (evogo_redis)
-         Senha (dpkjzl4kz7riuI5ah7rf)
+redis://  usuario  :  senha  @  host  :  porta
+         ↑         ↑         ↑        ↑
+         |         |         |        Porta (6379)
+         |         |         Host (evogo_redis)
+         |         Senha (d9kizl4kz7riul5ah7if)
+         Usuário (default)
 ```
 
 ---
@@ -109,7 +107,7 @@ Sem barra:    evo-ai-crm-community-main
 | Variável | Valor Errado | Valor Correto | Onde Corrigir |
 |----------|--------------|---------------|---------------|
 | POSTGRES_PASSWORD | `355cbf3375d96724d0ff` | `355cbf3375d96724de1f` | evo-crm, evo-crm-sidekiq |
-| REDIS_URL | Vários possíveis | `redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0` | evo-crm, evo-crm-sidekiq |
+| REDIS_URL | Vários possíveis | `redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379` | evo-crm, evo-crm-sidekiq |
 | Build Path | `/evo-ai-crm-community-main` | `evo-ai-crm-community-main` | evo-crm-sidekiq |
 
 ---
@@ -170,10 +168,10 @@ bundle exec rails runner "ActiveRecord::Base.connection.execute(\"INSERT INTO sc
 
 ✅ POSTGRES_DATABASE=evo_community
 
-🔍 REDIS_URL=redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
-   ├─ Verificar: tem ":" antes da senha
+🔍 REDIS_URL=redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
+   ├─ Verificar: tem "default:" antes da senha
    ├─ Verificar: tem "@" depois da senha
-   └─ Verificar: termina com "/0"
+   └─ Verificar: senha é "d9kizl4kz7riul5ah7if"
 
 ✅ SECRET_KEY_BASE=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==
 ✅ JWT_SECRET_KEY=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==
@@ -209,7 +207,7 @@ PGPASSWORD=355cbf3375d96724de1f psql -h evogo_postgres -U postgres -d evo_commun
 ### Verificar se Redis está acessível
 ```bash
 # No console do evo-crm
-bundle exec rails runner "puts Redis.new(url: 'redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0').ping"
+bundle exec rails runner "puts Redis.new(url: 'redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379').ping"
 
 # Deve retornar:
 PONG
@@ -242,7 +240,7 @@ POSTGRES_USERNAME=postgres
 POSTGRES_PASSWORD=355cbf3375d96724de1f
 POSTGRES_DATABASE=evo_community
 
-REDIS_URL=redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+REDIS_URL=redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 
 SECRET_KEY_BASE=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==
 JWT_SECRET_KEY=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==

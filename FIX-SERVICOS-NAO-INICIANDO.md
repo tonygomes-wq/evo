@@ -106,8 +106,8 @@ A URL do Redis não está incluindo a senha corretamente.
 2. **Corrigir REDIS_URL:**
    - Clicar em **"Ambiente"** (Environment)
    - Localizar: `REDIS_URL`
-   - **DEVE SER:** `redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0`
-   - Verificar que tem `:` antes da senha
+   - **DEVE SER:** `redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379`
+   - Verificar que tem `default:` antes da senha
    - Verificar que tem `@` depois da senha
 
 3. **Salvar e Reiniciar:**
@@ -281,7 +281,7 @@ POSTGRES_PASSWORD=355cbf3375d96724de1f
 POSTGRES_DATABASE=evo_community
 
 # Redis
-REDIS_URL=redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+REDIS_URL=redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 
 # Secrets
 SECRET_KEY_BASE=+ELXdtnIwCC/91zh4HMtHlPAqL1S5wE6efA7+n1acvKdI/uLBlcHnRuGn1gd0J3YJhJzPrRQWYINhblAJ/tMcA==

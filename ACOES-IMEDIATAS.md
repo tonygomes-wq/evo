@@ -28,7 +28,7 @@ Três serviços não estão iniciando:
 2. **Localizar e corrigir:**
    ```
    REDIS_URL
-   DEVE SER: redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+   DEVE SER: redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
    ```
 
 3. **Clicar em "Salvar" e depois "Reiniciar"**
@@ -61,7 +61,7 @@ Três serviços não estão iniciando:
 2. **Aba "Ambiente":**
    ```
    POSTGRES_PASSWORD: 355cbf3375d96724de1f
-   REDIS_URL: redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+   REDIS_URL: redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
    ```
 
 3. **Clicar em "Salvar" e depois "Rebuild"**
@@ -122,7 +122,7 @@ Marque conforme executar:
 → Verificar se POSTGRES_PASSWORD está exatamente: `355cbf3375d96724de1f`
 
 ### Erro: "WRONGPASS" ou "NOAUTH"
-→ Verificar se REDIS_URL tem `:` antes da senha e `@` depois
+→ Verificar se REDIS_URL está exatamente: `redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379`
 
 ### Erro: "sentiment_offensive already exists"
 → Executar comando no console do evo-crm (ver AÇÃO 1, passo 5)
@@ -141,7 +141,7 @@ Marque conforme executar:
 
 ### Redis URL
 ```
-redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 ```
 
 ### Build Path

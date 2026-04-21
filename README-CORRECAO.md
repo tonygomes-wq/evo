@@ -122,7 +122,7 @@ PARA: 355cbf3375d96724de1f
 
 ### 2. Corrigir REDIS_URL
 ```
-USAR: redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+USAR: redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 ```
 
 ### 3. Corrigir Build Path
@@ -189,7 +189,7 @@ Após a correção, você deve ter:
 
 **Redis URL:**
 ```
-redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 ```
 
 **Build Path:**

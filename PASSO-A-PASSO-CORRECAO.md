@@ -25,15 +25,15 @@ Valor CORRETO: 355cbf3375d96724de1f
 ⚠️ ATENÇÃO: Mudar apenas os últimos 4 caracteres: d0ff → de1f
 ```
 
-### 1.3 Corrigir URL do Redis
+### 2. Corrigir URL do Redis
 ```
 Localizar: REDIS_URL
-Valor DEVE SER: redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+Valor DEVE SER: redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 
 ✅ Verificar:
-   - Tem dois pontos (:) antes da senha
+   - Tem "default:" antes da senha
    - Tem arroba (@) depois da senha
-   - Termina com /0
+   - Senha é: d9kizl4kz7riul5ah7if
 ```
 
 ### 1.4 Salvar e Reiniciar
@@ -114,7 +114,7 @@ Valor DEVE SER: docker/Dockerfile
    Valor CORRETO: 355cbf3375d96724de1f
 
 3. Corrigir REDIS_URL:
-   Valor CORRETO: redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
+   Valor CORRETO: redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
 ```
 
 ### 2.4 Salvar e Rebuild
@@ -268,8 +268,8 @@ Database: evo_community
 
 ### Redis
 ```
-URL: redis://:dpkjzl4kz7riuI5ah7rf@evogo_redis:6379/0
-Password: dpkjzl4kz7riuI5ah7rf
+URL: redis://default:d9kizl4kz7riul5ah7if@evogo_redis:6379
+Password: d9kizl4kz7riul5ah7if
 ```
 
 ### Caminhos no Easypanel
