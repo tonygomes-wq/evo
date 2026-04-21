@@ -1,0 +1,50 @@
+-- Script para marcar TODAS as migrações como executadas de uma vez
+-- Execute no banco evo_community
+
+\c evo_community
+
+-- Marcar todas as migrações problemáticas identificadas
+INSERT INTO schema_migrations (version) VALUES ('20251114150000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251117132621') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251117132725') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251117181534') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251119113455') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251119155458') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251119170940') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251119171500') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251119174000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251121132530') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251124163127') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251124220146') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251125120000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251125120001') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251125120002') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251127131457') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251128160529') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251201132258') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251201132657') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251201133832') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251201134817') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251201134940') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251206093103') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251210132543') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251210132544') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20251210133342') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260105112028') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260105122008') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260209134608') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260209161000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260212183241') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260223150500') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260223163244') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260223163321') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260401120000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260406120000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260407120000') ON CONFLICT DO NOTHING;
+INSERT INTO schema_migrations (version) VALUES ('20260414120000') ON CONFLICT DO NOTHING;
+
+-- Verificar quantas migrações foram inseridas
+SELECT COUNT(*) as total_migrations FROM schema_migrations;
+
+-- Mostrar últimas 10 migrações
+SELECT version FROM schema_migrations ORDER BY version DESC LIMIT 10;
