@@ -147,18 +147,13 @@ COPY --from=pre-builder /app /app
 # Copy .git_sha file from pre-builder stage
 COPY --from=pre-builder /app/.git_sha /app/.git_sha
 
-# Copy entrypoint script (now in docker/ directory)
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-
 # Fix line endings and ensure entrypoint scripts have proper permissions
 RUN dos2unix /app/docker/entrypoints/*.sh \
-  && chmod +x /app/docker/entrypoints/*.sh \
-  && dos2unix /usr/local/bin/docker-entrypoint.sh \
-  && chmod +x /usr/local/bin/docker-entrypoint.sh
+  && chmod +x /app/docker/entrypoints/*.sh
 
 WORKDIR /app
 
 EXPOSE 3000
 
-# Set entrypoint
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+# Use shell form to allow command chaining
+CMD bundle exec rails db:prepare && bundle exec rails s -p 3000 -b 0.0.0.0
