@@ -37,15 +37,10 @@ COPY --chown=1000:1000 . .
 # Remove production-specific files that might cause issues
 RUN rm -f bin/thrust bin/docker-entrypoint
 
-# Copy entrypoint script and set permissions (before switching user)
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
 # Create non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails /rails && \
-    chown rails:rails /usr/local/bin/docker-entrypoint.sh
+    chown -R rails:rails /rails
 
 # Switch to non-root user
 USER rails:rails
@@ -56,6 +51,3 @@ EXPOSE 3001
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3001/health || exit 1
-
-# Set entrypoint
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

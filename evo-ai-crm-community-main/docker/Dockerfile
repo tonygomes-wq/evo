@@ -153,10 +153,4 @@ RUN dos2unix /app/docker/entrypoints/*.sh \
 
 WORKDIR /app
 
-# Create empty .env file for compatibility (some gems may try to load it)
-RUN touch /app/.env
-
 EXPOSE 3000
-
-# Use shell form to allow command chaining
-CMD bundle exec rails db:prepare && bundle exec rails s -p 3000 -b 0.0.0.0
