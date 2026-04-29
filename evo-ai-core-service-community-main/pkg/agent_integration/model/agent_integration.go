@@ -11,6 +11,7 @@ import (
 
 type AgentIntegration struct {
 	ID        uuid.UUID      `json:"-" gorm:"<-:create;type:uuid;primary_key;default:uuid_generate_v4()"`
+	AccountID *uuid.UUID     `json:"account_id" gorm:"type:uuid"`
 	AgentID   uuid.UUID      `json:"-" gorm:"<-:create;not null;type:uuid"`
 	Provider  string         `json:"-" gorm:"not null;type:varchar(100)"`
 	Config    datatypes.JSON `json:"-" gorm:"type:jsonb;default:'{}'"`
@@ -29,6 +30,7 @@ type AgentIntegrationRequest struct {
 
 type AgentIntegrationResponse struct {
 	ID        uuid.UUID              `json:"id"`
+	AccountID *uuid.UUID             `json:"account_id"`
 	AgentID   uuid.UUID              `json:"agent_id"`
 	Provider  string                 `json:"provider"`
 	Config    map[string]interface{} `json:"config"`
@@ -93,6 +95,7 @@ func (a *AgentIntegration) ToResponse() *AgentIntegrationResponse {
 
 	return &AgentIntegrationResponse{
 		ID:        a.ID,
+		AccountID: a.AccountID,
 		AgentID:   a.AgentID,
 		Provider:  a.Provider,
 		Config:    sanitizedConfig,

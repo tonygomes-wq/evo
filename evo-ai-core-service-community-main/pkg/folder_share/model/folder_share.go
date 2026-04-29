@@ -9,6 +9,7 @@ import (
 
 type FolderShare struct {
 	ID               uuid.UUID          `json:"-" gorm:"<-:create;type:uuid;primary_key;default:uuid_generate_v4()"`
+	AccountID        *uuid.UUID         `json:"account_id" gorm:"type:uuid"`
 	FolderID         uuid.UUID          `json:"-" gorm:"<-:create;type:uuid;not null; type:uuid;references:evo_core_folders(id)"`
 	Folder           folderModel.Folder `json:"-" gorm:"foreignKey:FolderID"`
 	SharedByUserID   uuid.UUID          `json:"-" gorm:"<-:create;not null;type:uuid"` // Removed foreign key reference to external users table
@@ -31,6 +32,7 @@ type FolderShareRequest struct {
 
 type FolderShareResponse struct {
 	ID               uuid.UUID `json:"id"`
+	AccountID        *uuid.UUID `json:"account_id"`
 	FolderID         uuid.UUID `json:"folder_id"`
 	SharedByUserID   uuid.UUID `json:"shared_by_user_id"`
 	SharedWithEmail  string    `json:"shared_with_email"`
@@ -80,6 +82,7 @@ type FolderShareListResponse struct {
 func (f *FolderShare) ToResponse() *FolderShareResponse {
 	return &FolderShareResponse{
 		ID:               f.ID,
+		AccountID:        f.AccountID,
 		FolderID:         f.FolderID,
 		SharedByUserID:   f.SharedByUserID,
 		SharedWithEmail:  f.SharedWithEmail,

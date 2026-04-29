@@ -10,6 +10,7 @@ import (
 
 type CustomMcpServer struct {
 	ID          uuid.UUID      `json:"-" gorm:"<-:create;type:uuid;primary_key;default:uuid_generate_v4()"`
+	AccountID   *uuid.UUID     `json:"account_id" gorm:"type:uuid"`
 	Name        string         `json:"-" gorm:"not null; type:varchar(255)"`
 	Description string         `json:"-" gorm:"type:text"`
 	URL         string         `json:"-" gorm:"not null; type:varchar(1024)"`
@@ -27,6 +28,7 @@ func (CustomMcpServer) TableName() string {
 }
 
 type CustomMcpServerBase struct {
+	AccountID   *uuid.UUID               `json:"account_id"`
 	Name        string                   `json:"name" binding:"required"`
 	Description string                   `json:"description"`
 	URL         string                   `json:"url" binding:"required"`
@@ -47,6 +49,7 @@ type CustomMcpServerUpdateRequest struct {
 
 type CustomMcpServerResponse struct {
 	ID          uuid.UUID                `json:"id"`
+	AccountID   *uuid.UUID               `json:"account_id"`
 	Name        string                   `json:"name"`
 	Description string                   `json:"description"`
 	URL         string                   `json:"url"`
@@ -97,6 +100,7 @@ type CustomMcpServerListResponse struct {
 func (u *CustomMcpServer) ToResponse() *CustomMcpServerResponse {
 	return &CustomMcpServerResponse{
 		ID:          u.ID,
+		AccountID:   u.AccountID,
 		Name:        u.Name,
 		Description: u.Description,
 		URL:         u.URL,

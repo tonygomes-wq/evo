@@ -10,6 +10,7 @@ import (
 
 type CustomTool struct {
 	ID            uuid.UUID      `json:"-" gorm:"<-:create;type:uuid;primary_key;default:uuid_generate_v4()"`
+	AccountID     *uuid.UUID     `json:"account_id" gorm:"type:uuid"`
 	Name          string         `json:"-" gorm:"not null; type:varchar(255)"`
 	Description   string         `json:"-" gorm:"type:text"`
 	Method        string         `json:"-" gorm:"not null; type:varchar(10)"`
@@ -33,6 +34,7 @@ func (CustomTool) TableName() string {
 }
 
 type CustomToolBase struct {
+	AccountID     *uuid.UUID             `json:"account_id"`
 	Name          string                 `json:"name" binding:"required"`
 	Description   string                 `json:"description"`
 	Method        string                 `json:"method" binding:"required" enums:"GET,POST,PUT,DELETE,PATCH,HEAD,OPTIONS"`
@@ -59,6 +61,7 @@ type CustomToolUpdateRequest struct {
 
 type CustomToolResponse struct {
 	ID            uuid.UUID              `json:"id"`
+	AccountID     *uuid.UUID             `json:"account_id"`
 	Name          string                 `json:"name"`
 	Description   string                 `json:"description"`
 	Method        string                 `json:"method"`
@@ -110,6 +113,7 @@ type CustomToolListResponse struct {
 func (u *CustomTool) ToResponse() *CustomToolResponse {
 	return &CustomToolResponse{
 		ID:            u.ID,
+		AccountID:     u.AccountID,
 		Name:          u.Name,
 		Description:   u.Description,
 		Method:        u.Method,

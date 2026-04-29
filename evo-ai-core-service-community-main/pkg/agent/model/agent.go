@@ -11,6 +11,7 @@ import (
 
 type Agent struct {
 	ID               uuid.UUID  `json:"-" gorm:"<-:create;type:uuid;primary_key;default:uuid_generate_v4()"`
+	AccountID        *uuid.UUID `json:"account_id" gorm:"type:uuid"`
 	Name             string     `json:"name" gorm:"not null; type:varchar(255)"`
 	Description      string     `json:"description" gorm:"type:text"`
 	Type             string     `json:"type" gorm:"not null; type:varchar(10)"`
@@ -67,6 +68,7 @@ func (n NullableUUID) MarshalJSON() ([]byte, error) {
 }
 
 type AgentBase struct {
+	AccountID   *uuid.UUID             `json:"account_id"`
 	Name        string                 `json:"name" binding:"required"`
 	Description string                 `json:"description"`
 	Type        string                 `json:"type" binding:"required"`
@@ -95,6 +97,7 @@ type AgentImportRequest struct {
 
 type AgentResponse struct {
 	ID               uuid.UUID              `json:"id"`
+	AccountID        *uuid.UUID             `json:"account_id"`
 	Name             string                 `json:"name"`
 	Description      string                 `json:"description"`
 	Type             string                 `json:"type"`
@@ -143,6 +146,7 @@ func (a *Agent) forceReturnCardUrl(cardUrl string, id uuid.UUID, aiProcessorURL 
 func (a *Agent) ToResponse(aiProcessorURL string) *AgentResponse {
 	return &AgentResponse{
 		ID:               a.ID,
+		AccountID:        a.AccountID,
 		Name:             a.Name,
 		Description:      a.Description,
 		Type:             a.Type,
