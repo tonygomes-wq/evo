@@ -1,6 +1,6 @@
 # Story 1.2: Tenant Middleware
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -24,14 +24,14 @@ so that downstream repositories and services can isolate data automatically base
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create Tenant Middleware (AC: 1)
-  - [ ] Create `internal/middleware/tenant.go`.
-  - [ ] Implement `TenantMiddleware` to extract `account_id` from the `evoAuth` token data (e.g., `tokenDataResponse.User.Accounts` or similar logic in `evo_auth.go`).
-- [ ] Task 2: Create Context Helpers (AC: 2, 3)
-  - [ ] Implement `GetTenantID` to safely retrieve and parse the UUID from the context.
-  - [ ] Return appropriate errors if missing or invalid.
-- [ ] Task 3: Integrate Middleware
-  - [ ] Register `TenantMiddleware` in the main router immediately after `EvoAuthMiddleware`.
+- [x] Task 1: Create Tenant Middleware (AC: 1)
+  - [x] Create `internal/middleware/tenant.go`.
+  - [x] Implement `TenantMiddleware` to extract `account_id` from the `evoAuth` token data (e.g., `tokenDataResponse.User.Accounts` or similar logic in `evo_auth.go`).
+- [x] Task 2: Create Context Helpers (AC: 2, 3)
+  - [x] Implement `GetTenantID` to safely retrieve and parse the UUID from the context.
+  - [x] Return appropriate errors if missing or invalid.
+- [x] Task 3: Integrate Middleware
+  - [x] Register `TenantMiddleware` in the main router immediately after `EvoAuthMiddleware`.
 
 ## Dev Notes
 
@@ -53,4 +53,13 @@ Gemini 2.5 Pro
 
 ### Completion Notes List
 
+- Updated `EvoAuthMiddleware` to inject user `Accounts` into the Gin context.
+- Created `TenantMiddleware` that extracts `Accounts`, defaults to the first account, but also respects an optional `X-Tenant-ID` header.
+- Implemented `GetTenantID` context helper.
+- Registered `TenantMiddleware` in `cmd/api/main.go` inside the `v1` group router right after `EvoAuthMiddleware`.
+
 ### File List
+
+- `internal/middleware/evo_auth.go`
+- `internal/middleware/tenant.go`
+- `cmd/api/main.go`

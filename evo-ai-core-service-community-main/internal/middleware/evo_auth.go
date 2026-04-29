@@ -66,6 +66,7 @@ func (m *evoAuthMiddleware) GetEvoAuthMiddleware() gin.HandlerFunc {
 		ctx = context.WithValue(ctx, "token", token)
 		ctx = context.WithValue(ctx, "token_type", tokenType)
 		ctx = context.WithValue(ctx, "user", tokenDataResponse.User)
+		ctx = context.WithValue(ctx, "accounts", tokenDataResponse.Accounts)
 		ctx = context.WithValue(ctx, "role", tokenDataResponse.User.Role)
 		ctx = context.WithValue(ctx, "type", tokenDataResponse.User.Type)
 

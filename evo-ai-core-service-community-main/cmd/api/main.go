@@ -72,6 +72,9 @@ func main() {
 	// Initialize EvoAuth middleware
 	evoAuthMiddleware := middleware.NewEvoAuthMiddleware(cfg.EvoAuth.BaseURL)
 
+	// Initialize Tenant middleware
+	tenantMiddleware := middleware.NewTenantMiddleware()
+
 	// Initialize global Permission middleware
 	middleware.InitializePermissionMiddleware(cfg.EvoAuth.BaseURL)
 
@@ -129,6 +132,7 @@ func main() {
 	// API v1 routes with EvoAuth authentication
 	v1 := router.Group("/api/v1")
 	v1.Use(evoAuthMiddleware.GetEvoAuthMiddleware())
+	v1.Use(tenantMiddleware.GetTenantMiddleware())
 	{
 		customToolModule.Handler.RegisterRoutesMiddleware(v1)
 		customMcpServerModule.Handler.RegisterRoutesMiddleware(v1)
