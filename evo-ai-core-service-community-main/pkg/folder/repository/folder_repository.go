@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"evo-ai-core-service/internal/utils/contextutils"
 	"evo-ai-core-service/pkg/folder/model"
 	"time"
 
@@ -27,6 +28,12 @@ func NewFolderRepository(db *gorm.DB) FolderRepository {
 }
 
 func (r *folderRepository) Create(ctx context.Context, folder model.Folder) (*model.Folder, error) {
+	// Inject account_id from context
+	accountID := contextutils.GetAccountIDFromContext(ctx)
+	if accountID != uuid.Nil {
+		folder.AccountID = &accountID
+	}
+
 	if err := r.db.WithContext(ctx).Create(&folder).Error; err != nil {
 		return nil, err
 	}
@@ -37,7 +44,17 @@ func (r *folderRepository) Create(ctx context.Context, folder model.Folder) (*mo
 func (r *folderRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.Folder, error) {
 	var folder model.Folder
 
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&folder).Error; err != nil {
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.First(&folder).Error; err != nil {
 		return nil, err
 	}
 
@@ -47,7 +64,17 @@ func (r *folderRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.Fo
 func (r *folderRepository) List(ctx context.Context, page int, pageSize int) ([]*model.Folder, error) {
 	var folders []*model.Folder
 
-	if err := r.db.WithContext(ctx).Offset((page - 1) * pageSize).Limit(pageSize).Find(&folders).Error; err != nil {
+	query := r.db.WithContext(ctx)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Offset((page - 1) * pageSize).Limit(pageSize).Find(&folders).Error; err != nil {
 		return []*model.Folder{}, err
 	}
 
@@ -57,7 +84,17 @@ func (r *folderRepository) List(ctx context.Context, page int, pageSize int) ([]
 func (r *folderRepository) Count(ctx context.Context) (int64, error) {
 	var count int64
 
-	if err := r.db.WithContext(ctx).Model(&model.Folder{}).Count(&count).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.Folder{})
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Count(&count).Error; err != nil {
 		return 0, err
 	}
 
@@ -66,7 +103,18 @@ func (r *folderRepository) Count(ctx context.Context) (int64, error) {
 
 func (r *folderRepository) Update(ctx context.Context, folder *model.Folder, id uuid.UUID) (*model.Folder, error) {
 	folder.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Where("id = ?", id).Updates(folder).First(&folder).Error; err != nil {
+	
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Updates(folder).First(&folder).Error; err != nil {
 		return nil, err
 	}
 
@@ -74,7 +122,17 @@ func (r *folderRepository) Update(ctx context.Context, folder *model.Folder, id 
 }
 
 func (r *folderRepository) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
-	if err := r.db.WithContext(ctx).Model(&model.Folder{}).Where("id = ?", id).Delete(&model.Folder{}).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.Folder{}).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Delete(&model.Folder{}).Error; err != nil {
 		return false, err
 	}
 

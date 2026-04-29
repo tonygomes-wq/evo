@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"evo-ai-core-service/internal/utils/contextutils"
 	"evo-ai-core-service/pkg/agent/model"
 	"time"
 
@@ -30,6 +31,12 @@ func NewAgentRepository(db *gorm.DB) AgentRepository {
 }
 
 func (r *agentRepository) Create(ctx context.Context, agent model.Agent) (*model.Agent, error) {
+	// Inject account_id from context
+	accountID := contextutils.GetAccountIDFromContext(ctx)
+	if accountID != uuid.Nil {
+		agent.AccountID = &accountID
+	}
+
 	if err := r.db.WithContext(ctx).Create(&agent).Error; err != nil {
 		return nil, err
 	}
@@ -40,7 +47,17 @@ func (r *agentRepository) Create(ctx context.Context, agent model.Agent) (*model
 func (r *agentRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.Agent, error) {
 	var agent model.Agent
 
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&agent).Error; err != nil {
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.First(&agent).Error; err != nil {
 		return nil, err
 	}
 
@@ -50,7 +67,17 @@ func (r *agentRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.Age
 func (r *agentRepository) List(ctx context.Context, page int, pageSize int) ([]*model.Agent, error) {
 	var agents []*model.Agent
 
-	if err := r.db.WithContext(ctx).Offset((page - 1) * pageSize).Limit(pageSize).Find(&agents).Error; err != nil {
+	query := r.db.WithContext(ctx)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Offset((page - 1) * pageSize).Limit(pageSize).Find(&agents).Error; err != nil {
 		return []*model.Agent{}, err
 	}
 
@@ -59,7 +86,18 @@ func (r *agentRepository) List(ctx context.Context, page int, pageSize int) ([]*
 
 func (r *agentRepository) Update(ctx context.Context, agent *model.Agent, id uuid.UUID) (*model.Agent, error) {
 	agent.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Where("id = ?", id).Updates(agent).First(&agent).Error; err != nil {
+
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Updates(agent).First(&agent).Error; err != nil {
 		return nil, err
 	}
 
@@ -67,7 +105,17 @@ func (r *agentRepository) Update(ctx context.Context, agent *model.Agent, id uui
 }
 
 func (r *agentRepository) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
-	if err := r.db.WithContext(ctx).Model(&model.Agent{}).Where("id = ?", id).Delete(&model.Agent{}).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.Agent{}).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Delete(&model.Agent{}).Error; err != nil {
 		return false, err
 	}
 
@@ -76,7 +124,17 @@ func (r *agentRepository) Delete(ctx context.Context, id uuid.UUID) (bool, error
 
 func (r *agentRepository) Count(ctx context.Context) (int64, error) {
 	var count int64
-	if err := r.db.WithContext(ctx).Model(&model.Agent{}).Count(&count).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.Agent{})
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Count(&count).Error; err != nil {
 		return 0, err
 	}
 
@@ -85,7 +143,17 @@ func (r *agentRepository) Count(ctx context.Context) (int64, error) {
 
 func (r *agentRepository) CountByFolderID(ctx context.Context, folderId uuid.UUID) (int64, error) {
 	var count int64
-	if err := r.db.WithContext(ctx).Model(&model.Agent{}).Where("folder_id = ?", folderId).Count(&count).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.Agent{}).Where("folder_id = ?", folderId)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Count(&count).Error; err != nil {
 		return 0, err
 	}
 
@@ -94,7 +162,17 @@ func (r *agentRepository) CountByFolderID(ctx context.Context, folderId uuid.UUI
 
 func (r *agentRepository) RemoveFolder(ctx context.Context, id uuid.UUID) (*model.Agent, error) {
 	var agent model.Agent
-	if err := r.db.WithContext(ctx).Model(&model.Agent{}).Where("id = ?", id).Update("folder_id", nil).First(&agent).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.Agent{}).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Update("folder_id", nil).First(&agent).Error; err != nil {
 		return nil, err
 	}
 
@@ -105,6 +183,14 @@ func (r *agentRepository) ListAgentsByFolderID(ctx context.Context, folderId uui
 	var agents []*model.Agent
 
 	query := r.db.WithContext(ctx).Where("folder_id = ?", folderId)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
 
 	if err := query.Offset((page - 1) * pageSize).Limit(pageSize).Find(&agents).Error; err != nil {
 		return []*model.Agent{}, err

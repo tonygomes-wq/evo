@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"evo-ai-core-service/internal/utils/contextutils"
 	"evo-ai-core-service/pkg/api_key/model"
 	"time"
 
@@ -27,6 +28,12 @@ func NewApiKeyRepository(db *gorm.DB) ApiKeyRepository {
 }
 
 func (r *apiKeyRepository) Create(ctx context.Context, apiKey model.ApiKey) (*model.ApiKey, error) {
+	// Inject account_id from context
+	accountID := contextutils.GetAccountIDFromContext(ctx)
+	if accountID != uuid.Nil {
+		apiKey.AccountID = &accountID
+	}
+
 	if err := r.db.WithContext(ctx).Create(&apiKey).Error; err != nil {
 		return nil, err
 	}
@@ -37,7 +44,17 @@ func (r *apiKeyRepository) Create(ctx context.Context, apiKey model.ApiKey) (*mo
 func (r *apiKeyRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.ApiKey, error) {
 	var apiKey model.ApiKey
 
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&apiKey).Error; err != nil {
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.First(&apiKey).Error; err != nil {
 		return nil, err
 	}
 
@@ -48,6 +65,14 @@ func (r *apiKeyRepository) List(ctx context.Context, request model.ApiKeyListReq
 	var apiKeys []*model.ApiKey
 
 	query := r.db.WithContext(ctx)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
 
 	// Filter by active status - default to active only
 	if request.Active != "" {
@@ -69,6 +94,14 @@ func (r *apiKeyRepository) Count(ctx context.Context, active string) (int64, err
 
 	query := r.db.WithContext(ctx).Model(&model.ApiKey{})
 
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
 	// Filter by active status - default to active only
 	if active != "" {
 		query = query.Where("is_active = ?", active)
@@ -86,7 +119,18 @@ func (r *apiKeyRepository) Count(ctx context.Context, active string) (int64, err
 
 func (r *apiKeyRepository) Update(ctx context.Context, apiKey *model.ApiKey, id uuid.UUID) (*model.ApiKey, error) {
 	apiKey.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Where("id = ?", id).Updates(apiKey).First(&apiKey).Error; err != nil {
+	
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Updates(apiKey).First(&apiKey).Error; err != nil {
 		return nil, err
 	}
 
@@ -94,7 +138,17 @@ func (r *apiKeyRepository) Update(ctx context.Context, apiKey *model.ApiKey, id 
 }
 
 func (r *apiKeyRepository) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
-	if err := r.db.WithContext(ctx).Model(&model.ApiKey{}).Where("id = ?", id).Update("is_active", false).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.ApiKey{}).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Update("is_active", false).Error; err != nil {
 		return false, err
 	}
 

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"evo-ai-core-service/internal/utils/contextutils"
 	"evo-ai-core-service/pkg/custom_mcp_server/model"
 	"strings"
 	"time"
@@ -30,6 +31,12 @@ func NewCustomMcpServerRepository(db *gorm.DB) CustomMcpServerRepository {
 }
 
 func (r *customMcpServerRepository) Create(ctx context.Context, customMcpServer model.CustomMcpServer) (*model.CustomMcpServer, error) {
+	// Inject account_id from context
+	accountID := contextutils.GetAccountIDFromContext(ctx)
+	if accountID != uuid.Nil {
+		customMcpServer.AccountID = &accountID
+	}
+
 	if err := r.db.WithContext(ctx).Create(&customMcpServer).Error; err != nil {
 		return nil, err
 	}
@@ -40,7 +47,17 @@ func (r *customMcpServerRepository) Create(ctx context.Context, customMcpServer 
 func (r *customMcpServerRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.CustomMcpServer, error) {
 	var customMcpServer model.CustomMcpServer
 
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&customMcpServer).Error; err != nil {
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.First(&customMcpServer).Error; err != nil {
 		return nil, err
 	}
 
@@ -51,6 +68,14 @@ func (r *customMcpServerRepository) List(ctx context.Context, request model.Cust
 	var customMcpServer []*model.CustomMcpServer
 
 	query := r.db.WithContext(ctx)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
 
 	if request.Search != "" {
 		query = query.Where("name ILIKE ?", "%"+request.Search+"%")
@@ -72,6 +97,14 @@ func (r *customMcpServerRepository) Count(ctx context.Context, request model.Cus
 
 	query := r.db.WithContext(ctx).Model(&model.CustomMcpServer{})
 
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
 	if request.Search != "" {
 		query = query.Where("name ILIKE ?", "%"+request.Search+"%")
 	}
@@ -89,7 +122,18 @@ func (r *customMcpServerRepository) Count(ctx context.Context, request model.Cus
 
 func (r *customMcpServerRepository) Update(ctx context.Context, customMcpServer *model.CustomMcpServer, id uuid.UUID) (*model.CustomMcpServer, error) {
 	customMcpServer.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Where("id = ?", id).Updates(customMcpServer).First(&customMcpServer).Error; err != nil {
+	
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Updates(customMcpServer).First(&customMcpServer).Error; err != nil {
 		return nil, err
 	}
 
@@ -97,7 +141,17 @@ func (r *customMcpServerRepository) Update(ctx context.Context, customMcpServer 
 }
 
 func (r *customMcpServerRepository) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
-	if err := r.db.WithContext(ctx).Model(&model.CustomMcpServer{}).Where("id = ?", id).Delete(&model.CustomMcpServer{}).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.CustomMcpServer{}).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Delete(&model.CustomMcpServer{}).Error; err != nil {
 		return false, err
 	}
 
@@ -107,7 +161,17 @@ func (r *customMcpServerRepository) Delete(ctx context.Context, id uuid.UUID) (b
 func (r *customMcpServerRepository) GetByAgentConfig(ctx context.Context, serverIDs []uuid.UUID) ([]*model.CustomMcpServer, error) {
 	var customMcpServer []*model.CustomMcpServer
 
-	if err := r.db.WithContext(ctx).Where("id IN (?)", serverIDs).Find(&customMcpServer).Error; err != nil {
+	query := r.db.WithContext(ctx).Where("id IN (?)", serverIDs)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Find(&customMcpServer).Error; err != nil {
 		return nil, err
 	}
 

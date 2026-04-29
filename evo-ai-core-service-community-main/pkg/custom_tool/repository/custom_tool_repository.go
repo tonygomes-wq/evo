@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"evo-ai-core-service/internal/utils/contextutils"
 	"evo-ai-core-service/pkg/custom_tool/model"
 	"strings"
 	"time"
@@ -29,6 +30,12 @@ func NewCustomToolRepository(db *gorm.DB) CustomToolRepository {
 }
 
 func (r *customToolRepository) Create(ctx context.Context, customTool model.CustomTool) (*model.CustomTool, error) {
+	// Inject account_id from context
+	accountID := contextutils.GetAccountIDFromContext(ctx)
+	if accountID != uuid.Nil {
+		customTool.AccountID = &accountID
+	}
+
 	if err := r.db.WithContext(ctx).Create(&customTool).Error; err != nil {
 		return nil, err
 	}
@@ -39,7 +46,17 @@ func (r *customToolRepository) Create(ctx context.Context, customTool model.Cust
 func (r *customToolRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.CustomTool, error) {
 	var customTool model.CustomTool
 
-	if err := r.db.WithContext(ctx).Where("id = ?", id).First(&customTool).Error; err != nil {
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.First(&customTool).Error; err != nil {
 		return nil, err
 	}
 
@@ -50,6 +67,14 @@ func (r *customToolRepository) List(ctx context.Context, request model.CustomToo
 	var customTool []*model.CustomTool
 
 	query := r.db.WithContext(ctx)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
 
 	if request.Search != "" {
 		query = query.Where("name ILIKE ?", "%"+request.Search+"%")
@@ -71,6 +96,14 @@ func (r *customToolRepository) Count(ctx context.Context, request model.CustomTo
 
 	query := r.db.WithContext(ctx).Model(&model.CustomTool{})
 
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
 	if request.Search != "" {
 		query = query.Where("name ILIKE ?", "%"+request.Search+"%")
 	}
@@ -88,7 +121,18 @@ func (r *customToolRepository) Count(ctx context.Context, request model.CustomTo
 
 func (r *customToolRepository) Update(ctx context.Context, customTool *model.CustomTool, id uuid.UUID) (*model.CustomTool, error) {
 	customTool.UpdatedAt = time.Now()
-	if err := r.db.WithContext(ctx).Where("id = ?", id).Updates(customTool).First(&customTool).Error; err != nil {
+	
+	query := r.db.WithContext(ctx).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Updates(customTool).First(&customTool).Error; err != nil {
 		return nil, err
 	}
 
@@ -96,7 +140,17 @@ func (r *customToolRepository) Update(ctx context.Context, customTool *model.Cus
 }
 
 func (r *customToolRepository) Delete(ctx context.Context, id uuid.UUID) (bool, error) {
-	if err := r.db.WithContext(ctx).Model(&model.CustomTool{}).Where("id = ?", id).Delete(&model.CustomTool{}).Error; err != nil {
+	query := r.db.WithContext(ctx).Model(&model.CustomTool{}).Where("id = ?", id)
+
+	// Filter by account_id (except for Super Admin without specific account)
+	if contextutils.ShouldFilterByAccount(ctx) {
+		accountID := contextutils.GetAccountIDFromContext(ctx)
+		if accountID != uuid.Nil {
+			query = query.Where("account_id = ?", accountID)
+		}
+	}
+
+	if err := query.Delete(&model.CustomTool{}).Error; err != nil {
 		return false, err
 	}
 
