@@ -1,0 +1,651 @@
+{
+  "info": {
+    "name": "Evo CRM - Multi-Tenant API",
+    "description": "Coleção completa de testes para o sistema multi-tenant do Evo CRM",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5555",
+      "type": "string"
+    },
+    {
+      "key": "auth_url",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "account_a_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "account_b_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "agent_a_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "agent_b_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticação",
+      "item": [
+        {
+          "name": "Login - Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.environment.set('token', jsonData.data.token);",
+                  "    console.log('Token salvo:', jsonData.data.token.substring(0, 20) + '...');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"sua_senha_aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{auth_url}}/api/v1/auth/login",
+              "host": ["{{auth_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Fazer login e obter token JWT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Verificar se o serviço está saudável"
+          }
+        },
+        {
+          "name": "Ready Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ready",
+              "host": ["{{base_url}}"],
+              "path": ["ready"]
+            },
+            "description": "Verificar se o serviço está pronto"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Admin - Accounts (Super Admin)",
+      "item": [
+        {
+          "name": "Listar Todas as Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/accounts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "accounts"]
+            },
+            "description": "Listar todas as accounts (apenas Super Admin)"
+          }
+        },
+        {
+          "name": "Criar Account A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('account_a_id', jsonData.account.id);",
+                  "    console.log('Account A ID:', jsonData.account.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Empresa A - Tecnologia\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/accounts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "accounts"]
+            },
+            "description": "Criar nova account (apenas Super Admin)"
+          }
+        },
+        {
+          "name": "Criar Account B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('account_b_id', jsonData.account.id);",
+                  "    console.log('Account B ID:', jsonData.account.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Empresa B - Consultoria\",\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/accounts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "accounts"]
+            },
+            "description": "Criar nova account (apenas Super Admin)"
+          }
+        },
+        {
+          "name": "Obter Estatísticas da Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/accounts/{{account_a_id}}/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "accounts", "{{account_a_id}}", "stats"]
+            },
+            "description": "Obter estatísticas de uma account específica"
+          }
+        },
+        {
+          "name": "Atualizar Status da Account",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"suspended\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/accounts/{{account_a_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "accounts", "{{account_a_id}}", "status"]
+            },
+            "description": "Atualizar status de uma account (active, inactive, suspended)"
+          }
+        },
+        {
+          "name": "Contar Recursos da Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/accounts/{{account_a_id}}/resources-count",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "accounts", "{{account_a_id}}", "resources-count"]
+            },
+            "description": "Contar recursos antes de deletar uma account"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Account Info",
+      "item": [
+        {
+          "name": "Obter Info da Minha Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/account/info",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "account", "info"]
+            },
+            "description": "Obter informações da account do usuário autenticado"
+          }
+        },
+        {
+          "name": "Obter Estatísticas da Minha Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/account/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "account", "stats"]
+            },
+            "description": "Obter estatísticas da account do usuário autenticado"
+          }
+        },
+        {
+          "name": "Obter Minhas Permissões",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/account/my-permissions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "account", "my-permissions"]
+            },
+            "description": "Obter permissões e capacidades do usuário autenticado"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Agents - Account A",
+      "item": [
+        {
+          "name": "Listar Agents da Account A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_a_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents"]
+            },
+            "description": "Listar agents da Account A"
+          }
+        },
+        {
+          "name": "Criar Agent na Account A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('agent_a_id', jsonData.data.id);",
+                  "    console.log('Agent A ID:', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_a_id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Agent da Empresa A\",\n  \"type\": \"chat\",\n  \"description\": \"Agent exclusivo da Empresa A\",\n  \"system_prompt\": \"Você é um assistente da Empresa A.\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents"]
+            },
+            "description": "Criar agent na Account A"
+          }
+        },
+        {
+          "name": "Obter Agent da Account A",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_a_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/{{agent_a_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents", "{{agent_a_id}}"]
+            },
+            "description": "Obter agent específico da Account A"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Agents - Account B",
+      "item": [
+        {
+          "name": "Listar Agents da Account B",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_b_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents"]
+            },
+            "description": "Listar agents da Account B"
+          }
+        },
+        {
+          "name": "Criar Agent na Account B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('agent_b_id', jsonData.data.id);",
+                  "    console.log('Agent B ID:', jsonData.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_b_id}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Agent da Empresa B\",\n  \"type\": \"chat\",\n  \"description\": \"Agent exclusivo da Empresa B\",\n  \"system_prompt\": \"Você é um assistente da Empresa B.\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents"]
+            },
+            "description": "Criar agent na Account B"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Testes de Isolamento",
+      "item": [
+        {
+          "name": "❌ Account A tenta acessar Agent B (deve falhar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_a_id}}",
+                "description": "Usando Account A"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/{{agent_b_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents", "{{agent_b_id}}"]
+            },
+            "description": "Tentar acessar agent da Account B usando contexto da Account A - DEVE RETORNAR 404"
+          }
+        },
+        {
+          "name": "❌ Account B tenta acessar Agent A (deve falhar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_b_id}}",
+                "description": "Usando Account B"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/{{agent_a_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents", "{{agent_a_id}}"]
+            },
+            "description": "Tentar acessar agent da Account A usando contexto da Account B - DEVE RETORNAR 404"
+          }
+        },
+        {
+          "name": "✅ Super Admin acessa Agent A (deve funcionar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_a_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/{{agent_a_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents", "{{agent_a_id}}"]
+            },
+            "description": "Super Admin pode acessar qualquer agent"
+          }
+        },
+        {
+          "name": "✅ Super Admin acessa Agent B (deve funcionar)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "X-Tenant-ID",
+                "value": "{{account_b_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents/{{agent_b_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents", "{{agent_b_id}}"]
+            },
+            "description": "Super Admin pode acessar qualquer agent"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Agents - Sem Tenant Específico",
+      "item": [
+        {
+          "name": "Listar Agents (usa primeira account do token)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents"]
+            },
+            "description": "Sem X-Tenant-ID, usa a primeira account do usuário"
+          }
+        },
+        {
+          "name": "Criar Agent (usa primeira account do token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Agent Padrão\",\n  \"type\": \"chat\",\n  \"description\": \"Agent criado sem especificar tenant\",\n  \"system_prompt\": \"Você é um assistente útil.\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/agents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "agents"]
+            },
+            "description": "Sem X-Tenant-ID, usa a primeira account do usuário"
+          }
+        }
+      ]
+    }
+  ]
+}
