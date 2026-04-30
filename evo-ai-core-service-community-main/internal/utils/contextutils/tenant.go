@@ -41,6 +41,25 @@ func GetUserEmailFromContext(ctx context.Context) (string, error) {
 	return email, nil
 }
 
+// GetRoleFromContext extracts the role from the request context.
+func GetRoleFromContext(ctx context.Context) string {
+	role, ok := ctx.Value("role").(string)
+	if !ok {
+		return ""
+	}
+	return role
+}
+
+// GetPermissionFromContext extracts the permission level from the request context.
+// This is only relevant for account_user role.
+func GetPermissionFromContext(ctx context.Context) string {
+	permission, ok := ctx.Value("permission").(string)
+	if !ok {
+		return ""
+	}
+	return permission
+}
+
 // ShouldFilterByAccount determines if queries should be filtered by account_id.
 // Returns false only for Super Admin users without a specific account_id set.
 func ShouldFilterByAccount(ctx context.Context) bool {
