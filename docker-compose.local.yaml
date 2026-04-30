@@ -118,7 +118,7 @@ services:
   evo-crm:
     build:
       context: ./evo-ai-crm-community-main
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -160,7 +160,7 @@ services:
   evo-crm-sidekiq:
     build:
       context: ./evo-ai-crm-community-main
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     restart: unless-stopped
     environment:
       RAILS_ENV: production
