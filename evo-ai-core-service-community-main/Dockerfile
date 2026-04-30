@@ -44,6 +44,9 @@ COPY migrations ./migrations
 # Copia o script de inicialização
 COPY entrypoint.sh ./entrypoint.sh
 
+# Converte line endings para Unix (LF) caso estejam em Windows (CRLF)
+RUN sed -i 's/\r$//' ./entrypoint.sh
+
 # Debug: Lista arquivos no diretório
 RUN ls -la /app/
 
