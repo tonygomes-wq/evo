@@ -280,8 +280,6 @@ services:
     environment:
       REDIS_URL: redis://:evoai_redis_pass@redis:6379
       AI_PROCESSOR_URL: http://evo-processor:8000
-    volumes:
-      - ./evo-bot-runtime-main:/app
     depends_on:
       redis:
         condition: service_healthy
