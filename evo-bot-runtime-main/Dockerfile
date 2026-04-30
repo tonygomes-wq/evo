@@ -12,7 +12,8 @@ FROM alpine:3.20
 
 WORKDIR /app
 COPY --from=builder /app/bin/evo-bot-runtime .
+RUN chmod +x /app/evo-bot-runtime
 
 EXPOSE 8080
 
-CMD ["./evo-bot-runtime"]
+CMD ["/app/evo-bot-runtime"]
