@@ -57,4 +57,4 @@ RUN ls -la ./main ./migrate ./entrypoint.sh
 EXPOSE 5555
 
 # Executa o script de inicialização
-CMD ["./entrypoint.sh"] 
+CMD ["/app/entrypoint.sh"] 
