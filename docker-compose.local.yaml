@@ -1,0 +1,349 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Infrastructure
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: evo_community
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: evoai_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["sh", "-c", "redis-server --requirepass evoai_redis_pass --appendonly yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "evoai_redis_pass", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mailhog:
+    image: mailhog/mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+
+  # ---------------------------------------------------------------------------
+  # Auth Service
+  # ---------------------------------------------------------------------------
+  evo-auth:
+    build:
+      context: ./evo-auth-service-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      RAILS_ENV: production
+      BACKEND_URL: http://localhost:3030
+      FRONTEND_URL: http://localhost:5173
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost:3030
+      POSTGRES_DATABASE: evo_community
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: evoai_dev_password
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://:evoai_redis_pass@redis:6379/1
+      SECRET_KEY_BASE: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      DOORKEEPER_JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      ENCRYPTION_KEY: XoQPOBw2FrzjQS11utERG9qO2MsAnXFxlhIns_uUxRk=
+    volumes:
+      - ./evo-auth-service-community-main:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "bundle install && bundle exec rails db:prepare && bundle exec rails s -p 3001 -b 0.0.0.0"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3001/health || curl -fsS http://localhost:3001/up || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
+
+  evo-auth-sidekiq:
+    build:
+      context: ./evo-auth-service-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      RAILS_ENV: production
+      BACKEND_URL: http://localhost:3030
+      FRONTEND_URL: http://localhost:5173
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost:3030
+      POSTGRES_DATABASE: evo_community
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: evoai_dev_password
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://:evoai_redis_pass@redis:6379/1
+      SECRET_KEY_BASE: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      DOORKEEPER_JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      ENCRYPTION_KEY: XoQPOBw2FrzjQS11utERG9qO2MsAnXFxlhIns_uUxRk=
+    volumes:
+      - ./evo-auth-service-community-main:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      evo-auth:
+        condition: service_healthy
+    command: sh -c "bundle install && bundle exec sidekiq"
+
+  # ---------------------------------------------------------------------------
+  # CRM Service
+  # ---------------------------------------------------------------------------
+  evo-crm:
+    build:
+      context: ./evo-ai-crm-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: production
+      BACKEND_URL: http://localhost:3030
+      FRONTEND_URL: http://localhost:5173
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost:3030
+      POSTGRES_DATABASE: evo_community
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: evoai_dev_password
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://:evoai_redis_pass@redis:6379/0
+      SECRET_KEY_BASE: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      ENCRYPTION_KEY: XoQPOBw2FrzjQS11utERG9qO2MsAnXFxlhIns_uUxRk=
+      EVOAI_CRM_API_TOKEN: 6e10e689-58ce-4416-bf0d-f5818bf2dcf8
+      EVO_AUTH_SERVICE_URL: http://evo-auth:3001
+      EVO_AI_CORE_SERVICE_URL: http://evo-core:5555
+      BOT_RUNTIME_URL: http://evo-bot-runtime:8080
+      BOT_RUNTIME_POSTBACK_BASE_URL: http://evo-crm:3000
+    volumes:
+      - ./evo-ai-crm-community-main:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      evo-auth:
+        condition: service_healthy
+    command: sh -c "bundle install && bundle exec rails db:prepare && bundle exec rails s -p 3000 -b 0.0.0.0"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  evo-crm-sidekiq:
+    build:
+      context: ./evo-ai-crm-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      RAILS_ENV: production
+      BACKEND_URL: http://localhost:3030
+      FRONTEND_URL: http://localhost:5173
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost:3030
+      POSTGRES_DATABASE: evo_community
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: evoai_dev_password
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://:evoai_redis_pass@redis:6379/0
+      SECRET_KEY_BASE: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      ENCRYPTION_KEY: XoQPOBw2FrzjQS11utERG9qO2MsAnXFxlhIns_uUxRk=
+      EVOAI_CRM_API_TOKEN: 6e10e689-58ce-4416-bf0d-f5818bf2dcf8
+      EVO_AUTH_SERVICE_URL: http://evo-auth:3001
+      EVO_AI_CORE_SERVICE_URL: http://evo-core:5555
+      BOT_RUNTIME_URL: http://evo-bot-runtime:8080
+      BOT_RUNTIME_POSTBACK_BASE_URL: http://evo-crm:3000
+    volumes:
+      - ./evo-ai-crm-community-main:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      evo-crm:
+        condition: service_healthy
+    command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+
+  # ---------------------------------------------------------------------------
+  # Core Service (Go)
+  # ---------------------------------------------------------------------------
+  evo-core:
+    build:
+      context: ./evo-ai-core-service-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: evoai_dev_password
+      DB_NAME: evo_community
+      DB_SSLMODE: disable
+      SECRET_KEY_BASE: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      JWT_SECRET_KEY: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      ENCRYPTION_KEY: XoQPOBw2FrzjQS11utERG9qO2MsAnXFxlhIns_uUxRk=
+      EVOLUTION_BASE_URL: http://evo-crm:3000
+      EVO_AUTH_BASE_URL: http://evo-auth:3001
+      AI_PROCESSOR_URL: http://evo-processor:8000
+    volumes:
+      - ./evo-ai-core-service-community-main:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      evo-auth:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Processor Service (Python)
+  # ---------------------------------------------------------------------------
+  evo-processor:
+    build:
+      context: ./evo-ai-processor-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_CONNECTION_STRING: postgresql://postgres:evoai_dev_password@postgres:5432/evo_community
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: evoai_redis_pass
+      REDIS_SSL: "false"
+      SECRET_KEY_BASE: a_i9F-k2-Lm7Nq0R-sT4uW6xZ8bD1eG3hJ5oP7rV9yAcE2fH4jM6pS8vX0zB3dK5nQ7tU9wY1
+      ENCRYPTION_KEY: XoQPOBw2FrzjQS11utERG9qO2MsAnXFxlhIns_uUxRk=
+      EVOAI_CRM_API_TOKEN: 6e10e689-58ce-4416-bf0d-f5818bf2dcf8
+      EVO_AI_CRM_URL: http://evo-crm:3000
+      CORE_SERVICE_URL: http://evo-core:5555/api/v1
+    volumes:
+      - ./evo-ai-processor-community-main:/app
+      - processor_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      evo-core:
+        condition: service_started
+    command: sh -c "alembic upgrade head && python -m scripts.run_seeders && uvicorn src.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Bot Runtime
+  # ---------------------------------------------------------------------------
+  evo-bot-runtime:
+    build:
+      context: ./evo-bot-runtime-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      REDIS_URL: redis://:evoai_redis_pass@redis:6379
+      AI_PROCESSOR_URL: http://evo-processor:8000
+    volumes:
+      - ./evo-bot-runtime-main:/app
+    depends_on:
+      redis:
+        condition: service_healthy
+      evo-processor:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # Frontend
+  # ---------------------------------------------------------------------------
+  evo-frontend:
+    build:
+      context: ./evo-ai-frontend-community-main
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    environment:
+      VITE_APP_ENV: production
+      VITE_API_URL: http://localhost:3030
+      VITE_AUTH_API_URL: http://localhost:3030
+      VITE_EVOAI_API_URL: http://localhost:3030
+      VITE_AGENT_PROCESSOR_URL: http://localhost:3030
+    volumes:
+      - ./evo-ai-frontend-community-main:/app
+    depends_on:
+      - evo-auth
+      - evo-crm
+      - evo-core
+      - evo-processor
+
+  # ---------------------------------------------------------------------------
+  # Gateway (Optional - comentado por padrão)
+  # ---------------------------------------------------------------------------
+  # evo-gateway:
+  #   build:
+  #     context: ./evo-crm-gateway
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3030:3030"
+  #   environment:
+  #     BACKEND_URL: http://localhost:3030
+  #     FRONTEND_URL: http://localhost:5173
+  #     CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost:3030
+  #   depends_on:
+  #     - evo-auth
+  #     - evo-crm
+  #     - evo-core
+  #     - evo-processor
+  #     - evo-bot-runtime
+
+volumes:
+  postgres_data:
+  redis_data:
+  processor_logs:
+
+networks:
+  default:
+    name: evo-local-network
