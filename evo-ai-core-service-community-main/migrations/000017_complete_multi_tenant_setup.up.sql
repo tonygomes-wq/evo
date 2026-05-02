@@ -2,19 +2,7 @@
 -- Description: Migrate existing data, add constraints, and create indexes
 -- Date: 2026-04-29
 
--- ============================================================================
--- STEP 1: Create Default Account (if not exists)
--- ============================================================================
-
-INSERT INTO accounts (id, name, status, created_at, updated_at)
-VALUES (
-    '00000000-0000-0000-0000-000000000001',
-    'Default Account',
-    'active',
-    NOW(),
-    NOW()
-)
-ON CONFLICT (id) DO NOTHING;
+-- STEP 1: Skipped. The accounts table is managed by the EvoAuth service, and account_id is an external reference.
 
 -- ============================================================================
 -- STEP 2: Migrate Orphaned Data to Default Account
@@ -85,44 +73,7 @@ BEGIN
     END IF;
 END $$;
 
--- ============================================================================
--- STEP 4: Add Foreign Key Constraints
--- ============================================================================
-
--- Agents
-ALTER TABLE evo_core_agents
-ADD CONSTRAINT fk_agents_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
-
--- Custom Tools
-ALTER TABLE evo_core_custom_tools
-ADD CONSTRAINT fk_custom_tools_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
-
--- API Keys
-ALTER TABLE evo_core_api_keys
-ADD CONSTRAINT fk_api_keys_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
-
--- Folders
-ALTER TABLE evo_core_folders
-ADD CONSTRAINT fk_folders_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
-
--- Folder Shares
-ALTER TABLE evo_core_folder_shares
-ADD CONSTRAINT fk_folder_shares_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
-
--- Custom MCP Servers
-ALTER TABLE evo_core_custom_mcp_servers
-ADD CONSTRAINT fk_custom_mcp_servers_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
-
--- Agent Integrations
-ALTER TABLE evo_core_agent_integrations
-ADD CONSTRAINT fk_agent_integrations_account_id
-FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
+-- STEP 4: Skipped. No foreign keys to accounts because accounts are managed by EvoAuth.
 
 -- ============================================================================
 -- STEP 5: Apply NOT NULL Constraints
@@ -235,9 +186,7 @@ ANALYZE evo_core_agent_integrations;
 DO $$
 BEGIN
     RAISE NOTICE 'Migration 000017 completed successfully';
-    RAISE NOTICE 'Default account created: 00000000-0000-0000-0000-000000000001';
     RAISE NOTICE 'All orphaned data migrated to default account';
-    RAISE NOTICE 'Foreign key constraints applied';
     RAISE NOTICE 'NOT NULL constraints applied';
     RAISE NOTICE 'Composite indexes created for performance';
 END $$;

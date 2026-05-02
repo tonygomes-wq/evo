@@ -22,12 +22,13 @@ class Role < ApplicationRecord
 
   validates :key, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: { scope: :type }
-  validates :type, presence: true, inclusion: { in: %w[user account] }
+  validates :type, presence: true, inclusion: { in: %w[user account system] }
 
   scope :system_roles, -> { where(system: true) }
   scope :non_system_roles, -> { where(system: false) }
   scope :user_type, -> { where(type: 'user') }
   scope :account_type, -> { where(type: 'account') }
+  scope :system_type, -> { where(type: 'system') }
   
   # Proteção para roles do sistema
   before_destroy :prevent_system_role_deletion

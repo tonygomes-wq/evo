@@ -149,7 +149,7 @@ services:
         condition: service_healthy
       evo-auth:
         condition: service_healthy
-    command: sh -c "bundle install && bundle exec rails db:prepare && bundle exec rails s -p 3000 -b 0.0.0.0"
+    command: sh -c "bundle install && bundle exec rails s -p 3000 -b 0.0.0.0"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health/live"]
       interval: 30s
@@ -202,6 +202,7 @@ services:
     ports:
       - "5555:5555"
     environment:
+      PORT: "5555"
       DB_HOST: postgres
       DB_PORT: "5432"
       DB_USER: postgres
@@ -214,6 +215,7 @@ services:
       EVOLUTION_BASE_URL: http://evo-crm:3000
       EVO_AUTH_BASE_URL: http://evo-auth:3001
       AI_PROCESSOR_URL: http://evo-processor:8000
+      AI_PROCESSOR_VERSION: v1
     depends_on:
       postgres:
         condition: service_healthy
@@ -315,25 +317,27 @@ services:
       - evo-processor
 
   # ---------------------------------------------------------------------------
-  # Gateway (Optional - comentado por padrão)
+  # Gateway
   # ---------------------------------------------------------------------------
-  # evo-gateway:
-  #   build:
-  #     context: ./evo-crm-gateway
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3030:3030"
-  #   environment:
-  #     BACKEND_URL: http://localhost:3030
-  #     FRONTEND_URL: http://localhost:5173
-  #     CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost:3030
-  #   depends_on:
-  #     - evo-auth
-  #     - evo-crm
-  #     - evo-core
-  #     - evo-processor
-  #     - evo-bot-runtime
+  evo-gateway:
+    build:
+      context: ./evo-crm-community-main/nginx
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3030:3030"
+    environment:
+      AUTH_UPSTREAM: evo-auth:3001
+      CRM_UPSTREAM: evo-crm:3000
+      EVOAI_UPSTREAM: evo-core:5555
+      PROCESSOR_UPSTREAM: evo-processor:8000
+      BOT_RUNTIME_UPSTREAM: evo-bot-runtime:8080
+    depends_on:
+      - evo-auth
+      - evo-crm
+      - evo-core
+      - evo-processor
+      - evo-bot-runtime
 
 volumes:
   postgres_data:

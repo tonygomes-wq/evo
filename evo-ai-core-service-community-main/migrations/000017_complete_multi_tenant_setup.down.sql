@@ -69,37 +69,7 @@ ALTER COLUMN account_id DROP NOT NULL;
 ALTER TABLE evo_core_agents 
 ALTER COLUMN account_id DROP NOT NULL;
 
--- ============================================================================
--- STEP 3: Drop Foreign Key Constraints
--- ============================================================================
-
--- Agent Integrations
-ALTER TABLE evo_core_agent_integrations
-DROP CONSTRAINT IF EXISTS fk_agent_integrations_account_id;
-
--- Custom MCP Servers
-ALTER TABLE evo_core_custom_mcp_servers
-DROP CONSTRAINT IF EXISTS fk_custom_mcp_servers_account_id;
-
--- Folder Shares
-ALTER TABLE evo_core_folder_shares
-DROP CONSTRAINT IF EXISTS fk_folder_shares_account_id;
-
--- Folders
-ALTER TABLE evo_core_folders
-DROP CONSTRAINT IF EXISTS fk_folders_account_id;
-
--- API Keys
-ALTER TABLE evo_core_api_keys
-DROP CONSTRAINT IF EXISTS fk_api_keys_account_id;
-
--- Custom Tools
-ALTER TABLE evo_core_custom_tools
-DROP CONSTRAINT IF EXISTS fk_custom_tools_account_id;
-
--- Agents
-ALTER TABLE evo_core_agents
-DROP CONSTRAINT IF EXISTS fk_agents_account_id;
+-- STEP 3: Skipped. No foreign keys to drop.
 
 -- ============================================================================
 -- STEP 4: Update Statistics
@@ -120,11 +90,9 @@ ANALYZE evo_core_agent_integrations;
 DO $$
 BEGIN
     RAISE NOTICE 'Migration 000017 rollback completed';
-    RAISE NOTICE 'Foreign key constraints removed';
     RAISE NOTICE 'NOT NULL constraints removed';
     RAISE NOTICE 'Composite indexes dropped';
     RAISE NOTICE '';
     RAISE WARNING 'Data migration was NOT reversed - all records still have account_id set';
-    RAISE WARNING 'Default account (00000000-0000-0000-0000-000000000001) was NOT deleted';
     RAISE WARNING 'To fully rollback, manually set account_id to NULL if needed';
 END $$;

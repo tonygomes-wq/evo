@@ -7,6 +7,26 @@ puts "   Available permissions: #{total_permissions}"
 
 puts "🏷️ Creating default Roles..."
 
+# Super Admin - Global administrator with access to all accounts
+super_admin = Role.find_or_initialize_by(key: 'super_admin')
+if super_admin.new_record?
+  super_admin.name = 'Super Admin'
+  super_admin.description = 'Global administrator with access to all accounts and system management'
+  super_admin.system = true
+  super_admin.type = 'system'
+  super_admin.save!
+  puts "   ✅ Created role: #{super_admin.name}"
+else
+  puts "   ♻️ Role already exists: #{super_admin.name}"
+end
+
+# Assign ALL permissions to Super Admin (including account_owner exclusive ones)
+super_admin.role_permissions_actions.destroy_all
+ResourceActionsConfig.all_permission_keys.each do |permission_key|
+  super_admin.role_permissions_actions.create!(permission_key: permission_key)
+end
+puts "   📋 Assigned #{ResourceActionsConfig.all_permission_keys.size} permissions to #{super_admin.name}"
+
 # Account Owner - Full access to account resources
 account_owner = Role.find_or_initialize_by(key: 'account_owner')
 if account_owner.new_record?
@@ -96,6 +116,30 @@ end
 
 puts "   📋 Assigned #{valid_permissions.size} permissions to #{account_owner.name}"
 puts "   📊 Total available permissions: #{ResourceActionsConfig.all_permission_keys.size}"
+
+# Account Admin - Administrator of a specific account (can manage users but not billing)
+account_admin = Role.find_or_initialize_by(key: 'account_admin')
+if account_admin.new_record?
+  account_admin.name = 'Account Admin'
+  account_admin.description = 'Administrator of a specific account with user management capabilities'
+  account_admin.system = true
+  account_admin.type = 'account'
+  account_admin.save!
+  puts "   ✅ Created role: #{account_admin.name}"
+else
+  puts "   ♻️ Role already exists: #{account_admin.name}"
+end
+
+# Account Admin gets same permissions as Account Owner minus some sensitive ones
+account_admin_permissions = account_owner_permissions - [
+  'accounts.update',
+  'accounts.delete'
+]
+account_admin.role_permissions_actions.destroy_all
+account_admin_permissions.select { |key| ResourceActionsConfig.valid_permission?(key) }.each do |permission_key|
+  account_admin.role_permissions_actions.create!(permission_key: permission_key)
+end
+puts "   📋 Assigned #{account_admin_permissions.select { |key| ResourceActionsConfig.valid_permission?(key) }.size} permissions to #{account_admin.name}"
 
 # Agent (basic user)
 agent = Role.find_or_initialize_by(key: 'agent')

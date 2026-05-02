@@ -152,6 +152,16 @@ Rails.application.routes.draw do
         end
       end
 
+      # Admin routes (Super Admin only)
+      namespace :admin do
+        resources :accounts, only: [:index, :create, :show, :update, :destroy] do
+          member do
+            get :users
+            post 'users/:user_id/assign_role', to: 'accounts#assign_user_role'
+          end
+        end
+      end
+
       # Health check
       get :health, to: 'health#show'
     end
