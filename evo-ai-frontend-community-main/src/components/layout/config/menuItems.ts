@@ -21,6 +21,7 @@ import {
   List,
   GraduationCap,
   Shield,
+  Building2,
 } from 'lucide-react';
 
 export interface MenuItem {
@@ -137,6 +138,12 @@ export const getCustomerMenuItems = (t: (key: string) => string): MenuItem[] => 
     icon: Layers,
     resource: 'channels',
     action: 'read',
+  },
+  {
+    name: t('menu.customer.manageAccounts'),
+    href: '/admin/accounts',
+    icon: Building2,
+    requiredRoleKey: 'super_admin',
   },
   {
     name: t('menu.customer.tutorials'),

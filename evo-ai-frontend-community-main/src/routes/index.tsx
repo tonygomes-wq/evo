@@ -70,6 +70,7 @@ import DashboardAppPage from '../pages/Customer/DashboardApp';
 
 // Páginas admin
 import AdminSettingsLayout from '@/pages/Admin/Settings';
+import { AccountsList, CreateAccount, AccountDetails } from '@/pages/Admin/Accounts';
 const SmtpConfig = React.lazy(() => import('@/pages/Admin/Settings/SmtpConfig'));
 const StorageConfig = React.lazy(() => import('@/pages/Admin/Settings/StorageConfig'));
 const SocialLoginConfig = React.lazy(() => import('@/pages/Admin/Settings/SocialLoginConfig'));
@@ -1211,7 +1212,47 @@ const AppRouter = () => {
             />
           </Route>
 
-          {/* Rotas Compartilhadas */}
+          {/* Admin Accounts Routes - Super Admin Only */}
+          <Route
+            path="/admin/accounts"
+            element={
+              <PrivateRoute>
+                <CustomerRoute>
+                  <MainLayout>
+                    <AccountsList />
+                  </MainLayout>
+                </CustomerRoute>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin/accounts/new"
+            element={
+              <PrivateRoute>
+                <CustomerRoute>
+                  <MainLayout>
+                    <CreateAccount />
+                  </MainLayout>
+                </CustomerRoute>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin/accounts/:id"
+            element={
+              <PrivateRoute>
+                <CustomerRoute>
+                  <MainLayout>
+                    <AccountDetails />
+                  </MainLayout>
+                </CustomerRoute>
+              </PrivateRoute>
+            }
+          />
+
+          {/* Rotas Compartilhadas */
           <Route
             path="/documentation"
             element={
