@@ -6,7 +6,7 @@ services:
       context: ./evo-ai-frontend-community-main
       dockerfile: Dockerfile.dev
     ports:
-      - "5173:5173"
+      - "5174:5173"
     restart: unless-stopped
     environment:
       VITE_APP_ENV: development

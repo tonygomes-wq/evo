@@ -1252,7 +1252,7 @@ const AppRouter = () => {
             }
           />
 
-          {/* Rotas Compartilhadas */
+          {/* Rotas Compartilhadas */}
           <Route
             path="/documentation"
             element={

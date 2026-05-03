@@ -1,4 +1,4 @@
-import api from '../index';
+import { api } from '../index';
 
 export interface Account {
   id: string;
@@ -71,47 +71,47 @@ export interface CreateAccountResponse {
 
 const accountsService = {
   // Listar todas as accounts
-  async getAccounts(): Promise<AccountsListResponse> {
-    const response = await api.get('/api/v1/admin/accounts');
-    return response.data;
+  async getAccounts(): Promise<Account[]> {
+    const response = await api.get('/admin/accounts');
+    return response.data.data;
   },
 
   // Obter detalhes de uma account
-  async getAccount(id: string): Promise<AccountDetailsResponse> {
-    const response = await api.get(`/api/v1/admin/accounts/${id}`);
-    return response.data;
+  async getAccount(id: string): Promise<Account> {
+    const response = await api.get(`/admin/accounts/${id}`);
+    return response.data.data.account;
   },
 
   // Criar nova account
   async createAccount(data: CreateAccountData): Promise<CreateAccountResponse> {
-    const response = await api.post('/api/v1/admin/accounts', data);
+    const response = await api.post('/admin/accounts', data);
     return response.data;
   },
 
   // Atualizar account
-  async updateAccount(id: string, data: Partial<Account>): Promise<{ success: boolean; data: Account }> {
-    const response = await api.patch(`/api/v1/admin/accounts/${id}`, { account: data });
-    return response.data;
+  async updateAccount(id: string, data: Partial<Account>): Promise<Account> {
+    const response = await api.patch(`/admin/accounts/${id}`, { account: data });
+    return response.data.data;
   },
 
   // Deletar account
   async deleteAccount(id: string): Promise<{ success: boolean }> {
-    const response = await api.delete(`/api/v1/admin/accounts/${id}`);
+    const response = await api.delete(`/admin/accounts/${id}`);
     return response.data;
   },
 
   // Listar usuários de uma account
-  async getAccountUsers(id: string): Promise<{ success: boolean; data: AccountUser[] }> {
-    const response = await api.get(`/api/v1/admin/accounts/${id}/users`);
-    return response.data;
+  async getAccountUsers(id: string): Promise<AccountUser[]> {
+    const response = await api.get(`/admin/accounts/${id}/users`);
+    return response.data.data;
   },
 
   // Atribuir role a um usuário
-  async assignUserRole(accountId: string, userId: string, roleKey: string): Promise<{ success: boolean; data: AccountUser }> {
-    const response = await api.post(`/api/v1/admin/accounts/${accountId}/users/${userId}/assign_role`, {
+  async assignUserRole(accountId: string, userId: string, roleKey: string): Promise<AccountUser> {
+    const response = await api.post(`/admin/accounts/${accountId}/users/${userId}/assign_role`, {
       role_key: roleKey
     });
-    return response.data;
+    return response.data.data;
   }
 };
 

@@ -1,35 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Button, 
-  Card, 
-  CardContent, 
-  Typography, 
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  IconButton,
-  CircularProgress,
-  Alert
-} from '@mui/material';
-import { 
-  Add as AddIcon, 
-  Visibility as ViewIcon,
-  Business as BusinessIcon
-} from '@mui/icons-material';
-import accountsService, { Account } from '../../../services/admin/accountsService';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button,
+  Badge,
+  Input
+} from '@evoapi/design-system';
+import {
+  Building2,
+  Plus,
+  Search,
+  Eye
+} from 'lucide-react';
+import accountsService, { Account } from '@/services/admin/accountsService';
+import { toast } from 'sonner';
+import { BaseHeader } from '@/components/base';
 
 const AccountsList: React.FC = () => {
   const navigate = useNavigate();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     loadAccounts();
@@ -38,159 +32,106 @@ const AccountsList: React.FC = () => {
   const loadAccounts = async () => {
     try {
       setLoading(true);
-      setError(null);
-      const response = await accountsService.getAccounts();
-      setAccounts(response.data);
-    } catch (err: any) {
-      console.error('Erro ao carregar empresas:', err);
-      setError(err.response?.data?.error || 'Erro ao carregar empresas');
+      const data = await accountsService.getAccounts();
+      setAccounts(data);
+    } catch (error: any) {
+      toast.error('Erro ao carregar empresas: ' + (error.message || 'Erro desconhecido'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateAccount = () => {
-    navigate('/admin/accounts/new');
-  };
-
-  const handleViewAccount = (accountId: string) => {
-    navigate(`/admin/accounts/${accountId}`);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'success';
-      case 'inactive':
-        return 'default';
-      case 'suspended':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'Ativo';
-      case 'inactive':
-        return 'Inativo';
-      case 'suspended':
-        return 'Suspenso';
-      default:
-        return status;
-    }
-  };
-
-  if (loading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
-    );
-  }
+  const filteredAccounts = accounts.filter(account =>
+    account.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    account.domain?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Box display="flex" alignItems="center" gap={2}>
-          <BusinessIcon sx={{ fontSize: 32, color: 'primary.main' }} />
-          <Typography variant="h4" component="h1">
-            Gerenciar Empresas
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleCreateAccount}
-        >
-          Nova Empresa
-        </Button>
-      </Box>
+    <div className="flex flex-col h-full">
+      <BaseHeader
+        title="Gerenciar Empresas"
+        subtitle="Gerencie todas as empresas do sistema"
+        primaryAction={{
+          label: 'Nova Empresa',
+          icon: <Plus className="h-4 w-4" />,
+          onClick: () => navigate('/admin/accounts/new')
+        }}
+      />
 
-      {/* Error Alert */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
+      <div className="flex-1 overflow-auto p-6">
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nome ou domínio..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
 
-      {/* Accounts Table */}
-      <Card>
-        <CardContent>
-          {accounts.length === 0 ? (
-            <Box textAlign="center" py={4}>
-              <BusinessIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-              <Typography variant="h6" color="text.secondary" gutterBottom>
-                Nenhuma empresa cadastrada
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={3}>
-                Crie sua primeira empresa para começar
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                onClick={handleCreateAccount}
-              >
-                Criar Primeira Empresa
-              </Button>
-            </Box>
-          ) : (
-            <TableContainer component={Paper} elevation={0}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Nome</strong></TableCell>
-                    <TableCell><strong>Domínio</strong></TableCell>
-                    <TableCell><strong>Email de Suporte</strong></TableCell>
-                    <TableCell><strong>Status</strong></TableCell>
-                    <TableCell><strong>Criado em</strong></TableCell>
-                    <TableCell align="center"><strong>Ações</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {accounts.map((account) => (
-                    <TableRow key={account.id} hover>
-                      <TableCell>
-                        <Typography variant="body1" fontWeight="medium">
-                          {account.name}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>{account.domain || '-'}</TableCell>
-                      <TableCell>{account.support_email}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={getStatusLabel(account.status)}
-                          color={getStatusColor(account.status)}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        {new Date(account.created_at).toLocaleDateString('pt-BR')}
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconButton
-                          color="primary"
-                          size="small"
-                          onClick={() => handleViewAccount(account.id)}
-                          title="Ver Detalhes"
-                        >
-                          <ViewIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </CardContent>
-      </Card>
-    </Box>
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          </div>
+        ) : filteredAccounts.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center h-64">
+              <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">
+                {searchTerm ? 'Nenhuma empresa encontrada' : 'Nenhuma empresa cadastrada'}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {filteredAccounts.map((account) => (
+              <Card key={account.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      <div>
+                        <CardTitle className="text-lg">{account.name}</CardTitle>
+                        {account.domain && (
+                          <p className="text-sm text-muted-foreground">{account.domain}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                        {account.status === 'active' ? 'Ativa' : 'Inativa'}
+                      </Badge>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/admin/accounts/${account.id}`)}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ver Detalhes
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Email de Suporte:</span>
+                      <p className="font-medium">{account.support_email}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Idioma:</span>
+                      <p className="font-medium">{account.locale}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

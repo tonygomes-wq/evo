@@ -1,325 +1,135 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Box,
-  Button,
   Card,
   CardContent,
-  Typography,
-  Grid,
-  Alert,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  Divider
-} from '@mui/material';
+  CardHeader,
+  CardTitle,
+  Badge
+} from '@evoapi/design-system';
 import {
-  ArrowBack as BackIcon,
-  Business as BusinessIcon,
-  People as PeopleIcon,
-  Assessment as StatsIcon
-} from '@mui/icons-material';
-import accountsService, { Account, AccountUser, AccountStats } from '../../../services/admin/accountsService';
+  ArrowLeft,
+  Building2,
+  Mail,
+  Globe,
+  Calendar
+} from 'lucide-react';
+import accountsService, { Account } from '@/services/admin/accountsService';
+import { toast } from 'sonner';
+import { BaseHeader } from '@/components/base';
 
 const AccountDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [account, setAccount] = useState<Account | null>(null);
-  const [users, setUsers] = useState<AccountUser[]>([]);
-  const [stats, setStats] = useState<AccountStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
-      loadAccountDetails();
+      loadAccount(id);
     }
   }, [id]);
 
-  const loadAccountDetails = async () => {
-    if (!id) return;
-
+  const loadAccount = async (accountId: string) => {
     try {
       setLoading(true);
-      setError(null);
-      const response = await accountsService.getAccount(id);
-      setAccount(response.data.account);
-      setUsers(response.data.users);
-      setStats(response.data.stats);
-    } catch (err: any) {
-      console.error('Erro ao carregar detalhes da empresa:', err);
-      setError(err.response?.data?.error || 'Erro ao carregar detalhes da empresa');
+      const data = await accountsService.getAccount(accountId);
+      setAccount(data);
+    } catch (error: any) {
+      toast.error('Erro ao carregar empresa: ' + (error.message || 'Erro desconhecido'));
+      navigate('/admin/accounts');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBack = () => {
-    navigate('/admin/accounts');
-  };
-
-  const getRoleColor = (roleKey: string) => {
-    switch (roleKey) {
-      case 'super_admin':
-        return 'error';
-      case 'account_owner':
-      case 'account_admin':
-        return 'primary';
-      case 'agent':
-        return 'default';
-      default:
-        return 'default';
-    }
-  };
-
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
     );
   }
 
-  if (error || !account) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error || 'Empresa não encontrada'}
-        </Alert>
-        <Button startIcon={<BackIcon />} onClick={handleBack}>
-          Voltar
-        </Button>
-      </Box>
-    );
+  if (!account) {
+    return null;
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box display="flex" alignItems="center" gap={2} mb={3}>
-        <Button
-          startIcon={<BackIcon />}
-          onClick={handleBack}
-          variant="outlined"
-        >
-          Voltar
-        </Button>
-        <BusinessIcon sx={{ fontSize: 32, color: 'primary.main' }} />
-        <Typography variant="h4" component="h1">
-          {account.name}
-        </Typography>
-        <Chip
-          label={account.status === 'active' ? 'Ativo' : account.status}
-          color={account.status === 'active' ? 'success' : 'default'}
-        />
-      </Box>
+    <div className="flex flex-col h-full">
+      <BaseHeader
+        title={account.name}
+        subtitle="Detalhes da empresa"
+        secondaryActions={[{
+          label: 'Voltar',
+          icon: <ArrowLeft className="h-4 w-4" />,
+          onClick: () => navigate('/admin/accounts'),
+          variant: 'outline'
+        }]}
+      />
 
-      <Grid container spacing={3}>
-        {/* Informações da Empresa */}
-        <Grid item xs={12} md={6}>
+      <div className="flex-1 overflow-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-6">
           <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <BusinessIcon color="primary" />
-                <Typography variant="h6">Informações da Empresa</Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary">
-                    Nome
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {account.name}
-                  </Typography>
-                </Grid>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Informações da Empresa</CardTitle>
+                <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                  {account.status === 'active' ? 'Ativa' : 'Inativa'}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Building2 className="h-4 w-4" />
+                    <span>Nome</span>
+                  </div>
+                  <p className="font-medium">{account.name}</p>
+                </div>
 
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary">
-                    Domínio
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {account.domain || '-'}
-                  </Typography>
-                </Grid>
+                {account.domain && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Globe className="h-4 w-4" />
+                      <span>Domínio</span>
+                    </div>
+                    <p className="font-medium">{account.domain}</p>
+                  </div>
+                )}
 
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary">
-                    Email de Suporte
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {account.support_email}
-                  </Typography>
-                </Grid>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Mail className="h-4 w-4" />
+                    <span>Email de Suporte</span>
+                  </div>
+                  <p className="font-medium">{account.support_email}</p>
+                </div>
 
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary">
-                    Idioma
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {account.locale}
-                  </Typography>
-                </Grid>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Globe className="h-4 w-4" />
+                    <span>Idioma</span>
+                  </div>
+                  <p className="font-medium">{account.locale}</p>
+                </div>
 
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary">
-                    Criado em
-                  </Typography>
-                  <Typography variant="body1" fontWeight="medium">
-                    {new Date(account.created_at).toLocaleString('pt-BR')}
-                  </Typography>
-                </Grid>
-              </Grid>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>Data de Criação</span>
+                  </div>
+                  <p className="font-medium">
+                    {new Date(account.created_at).toLocaleDateString('pt-BR')}
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
-        </Grid>
-
-        {/* Estatísticas */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <StatsIcon color="primary" />
-                <Typography variant="h6">Estatísticas</Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Box
-                    sx={{
-                      p: 2,
-                      bgcolor: 'primary.light',
-                      borderRadius: 1,
-                      textAlign: 'center'
-                    }}
-                  >
-                    <Typography variant="h3" color="primary.main">
-                      {stats?.users_count || 0}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Usuários
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box
-                    sx={{
-                      p: 2,
-                      bgcolor: 'success.light',
-                      borderRadius: 1,
-                      textAlign: 'center'
-                    }}
-                  >
-                    <Typography variant="h4" color="success.main">
-                      {stats?.agents_count || 0}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Agentes
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box
-                    sx={{
-                      p: 2,
-                      bgcolor: 'info.light',
-                      borderRadius: 1,
-                      textAlign: 'center'
-                    }}
-                  >
-                    <Typography variant="h4" color="info.main">
-                      {stats?.conversations_count || 0}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Conversas
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Usuários */}
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <PeopleIcon color="primary" />
-                <Typography variant="h6">Usuários</Typography>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-
-              {users.length === 0 ? (
-                <Box textAlign="center" py={4}>
-                  <Typography variant="body1" color="text.secondary">
-                    Nenhum usuário encontrado
-                  </Typography>
-                </Box>
-              ) : (
-                <TableContainer component={Paper} elevation={0}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell><strong>Nome</strong></TableCell>
-                        <TableCell><strong>Email</strong></TableCell>
-                        <TableCell><strong>Roles</strong></TableCell>
-                        <TableCell><strong>Confirmado</strong></TableCell>
-                        <TableCell><strong>Criado em</strong></TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {users.map((user) => (
-                        <TableRow key={user.id} hover>
-                          <TableCell>
-                            <Typography variant="body1" fontWeight="medium">
-                              {user.name}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>
-                            <Box display="flex" gap={0.5} flexWrap="wrap">
-                              {user.roles.map((role) => (
-                                <Chip
-                                  key={role.key}
-                                  label={role.name}
-                                  color={getRoleColor(role.key)}
-                                  size="small"
-                                />
-                              ))}
-                            </Box>
-                          </TableCell>
-                          <TableCell>
-                            <Chip
-                              label={user.confirmed_at ? 'Sim' : 'Não'}
-                              color={user.confirmed_at ? 'success' : 'warning'}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {new Date(user.created_at).toLocaleDateString('pt-BR')}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };
 
