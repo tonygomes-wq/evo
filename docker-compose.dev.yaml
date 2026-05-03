@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  evo-frontend:
+    build:
+      context: ./evo-ai-frontend-community-main
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+    environment:
+      VITE_APP_ENV: development
+      VITE_API_URL: http://localhost:3030
+      VITE_AUTH_API_URL: http://localhost:3030
+      VITE_EVOAI_API_URL: http://localhost:3030
+      VITE_AGENT_PROCESSOR_URL: http://localhost:3030
+    volumes:
+      - ./evo-ai-frontend-community-main:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0

@@ -17,7 +17,7 @@ export interface Role {
   name: string;
   description: string;
   system: boolean;
-  type: 'user' | 'account';
+  type: 'user' | 'account' | 'system';
   created_at: string;
   updated_at: string;
   permissions_count?: number;
@@ -33,7 +33,7 @@ export interface RoleCreate {
   name: string;
   description?: string;
   system?: boolean;
-  type: 'user' | 'account';
+  type: 'user' | 'account' | 'system';
 }
 
 export interface RoleUpdate {
@@ -41,7 +41,7 @@ export interface RoleUpdate {
   name?: string;
   description?: string;
   system?: boolean;
-  type?: 'user' | 'account';
+  type?: 'user' | 'account' | 'system';
 }
 
 export interface RolePermission {
@@ -68,7 +68,7 @@ export interface RolePermissionUpdate {
 export interface RoleFilters {
   search?: string;
   systemOnly?: boolean;
-  type?: 'user' | 'account';
+  type?: 'user' | 'account' | 'system';
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
 }
